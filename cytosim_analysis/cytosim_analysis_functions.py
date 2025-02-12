@@ -15,6 +15,9 @@ from matplotlib.colors import LogNorm
 from matplotlib.colors import SymLogNorm
 from scipy import stats
 from scipy.stats import binned_statistic_2d
+import textwrap
+from scipy.signal import savgol_filter
+from scipy.signal import find_peaks
 
 def test_func():
     print('test3')
@@ -389,7 +392,7 @@ def solid_positions(output_dirs, rundirs_allparams_df, solid_allruns_allparams):
 
     return(solid_allparams)
 
-def all_hip1r(output_dirs, rundirs_allparams_df, single_hip1r_allruns_allparams):
+def all_hip1r(output_dirs, rundirs_allparams_df, single_hip1r_allruns_allparams, solid_allparams):
     hip1r_list = []
 
     for output_dir in output_dirs:
@@ -451,15 +454,22 @@ def all_hip1r(output_dirs, rundirs_allparams_df, single_hip1r_allruns_allparams)
     hip1r_allparams = pd.concat(hip1r_list, keys = output_dirs,
                                 names = ['param_sweep', 'run', 'time', 'id'])
 
+    hip1r_allparams['xpos_rel'] = hip1r_allparams['xpos']-solid_allparams.reset_index(level='id', drop=True)['xpos']
+    hip1r_allparams['ypos_rel'] = hip1r_allparams['ypos']-solid_allparams.reset_index(level='id', drop=True)['ypos']
+    hip1r_allparams['rpos_rel'] = np.sqrt(np.square(hip1r_allparams['xpos_rel'])+
+                                        np.square(hip1r_allparams['ypos_rel']))
+
     return(hip1r_allparams)
 
-def all_myosin(output_dirs, rundirs_allparams_df, single_membrane_myosin_allruns_allparams, solid_allparams):
+def all_myosin(output_dirs, rundirs_allparams_df, single_membrane_myosin_allruns_allparams):
     membrane_myosin_list = []
 
     for output_dir in output_dirs:
         rundirs = rundirs_allparams_df.loc[output_dir]
         single_membrane_myosin_outputs_allruns = []
         for rundir in rundirs:
+            if rundir == 'empty':
+                continue
             single_all_lines = single_membrane_myosin_allruns_allparams[output_dir][rundir]
             timepoints = []
             outputs = []
@@ -508,10 +518,6 @@ def all_myosin(output_dirs, rundirs_allparams_df, single_membrane_myosin_allruns
     membrane_myosin_allparams = pd.concat(membrane_myosin_list, keys = output_dirs,
                                 names = ['param_sweep', 'run', 'time', 'id'])
 
-    membrane_myosin_allparams['xpos_rel'] = membrane_myosin_allparams['xpos']-solid_allparams.reset_index(level='id', drop=True)['xpos']
-    membrane_myosin_allparams['ypos_rel'] = membrane_myosin_allparams['ypos']-solid_allparams.reset_index(level='id', drop=True)['ypos']
-    membrane_myosin_allparams['rpos_rel'] = np.sqrt(np.square(membrane_myosin_allparams['xpos_rel'])+
-                                        np.square(membrane_myosin_allparams['ypos_rel']))
     return(membrane_myosin_allparams)
 
 def get_fiber_clusters(output_dirs, rundirs_allparams_df, fiber_clusters_allruns_allparams):
@@ -611,7 +617,7 @@ def get_fiber_forces(output_dirs, rundirs_allparams_df, fiber_forces_allruns_all
 
     return(forces_allparams)
 
-def get_fiber_ends(output_dirs, rundirs_allparams_df, fiber_ends_allruns_allparams):
+def get_fiber_ends(output_dirs, rundirs_allparams_df, fiber_ends_allruns_allparams, solid_allparams):
     ends_list = []
     for output_dir in output_dirs:
         rundirs = rundirs_allparams_df.loc[output_dir]
@@ -677,6 +683,16 @@ def get_fiber_ends(output_dirs, rundirs_allparams_df, fiber_ends_allruns_allpara
         print('finished parsing ' + output_dir)
     ends_allparams = pd.concat(ends_list, keys = output_dirs,
             names = ['param_sweep', 'run', 'time', 'id'])
+
+    ends_allparams['minus_xpos_rel'] = ends_allparams['minus_xpos']-solid_allparams.reset_index(level='id', drop=True)['xpos']
+    ends_allparams['minus_ypos_rel'] = ends_allparams['minus_ypos']-solid_allparams.reset_index(level='id', drop=True)['ypos']
+    ends_allparams['minus_rpos_rel'] = np.sqrt(np.square(ends_allparams['minus_xpos_rel'])+
+                                        np.square(ends_allparams['minus_ypos_rel']))
+
+    ends_allparams['plus_xpos_rel'] = ends_allparams['plus_xpos']-solid_allparams.reset_index(level='id', drop=True)['xpos']
+    ends_allparams['plus_ypos_rel'] = ends_allparams['plus_ypos']-solid_allparams.reset_index(level='id', drop=True)['ypos']
+    ends_allparams['plus_rpos_rel'] = np.sqrt(np.square(ends_allparams['plus_xpos_rel'])+
+                                        np.square(ends_allparams['plus_ypos_rel']))
 
     return(ends_allparams)
 
@@ -1116,8 +1132,8 @@ def summary_statistics(output_dirs, rundirs_allparams_df, fiber_ends_summary_all
                     output_dir].loc[run].loc[10:15]['mass_associated'].mean(),
                 'mass_associated_first5s_mean' : fiber_ends_summary_allparams.loc[
                     output_dir].loc[run].loc[:5]['mass_associated'].mean(),
-                'growth_attenuation_cumsum_max' : np.max(fiber_ends_summary_allparams.loc[
-                    output_dir].loc[run]['growth_attenuation'].cumsum()),
+                'growth_attenuation_sum' : fiber_ends_summary_allparams.loc[
+                    output_dir].loc[run]['growth_attenuation'].sum(),
 
                 'length_total_mean_95per' : np.percentile(fiber_ends_summary_allparams.loc[
                     output_dir].loc[run]['length_total_mean'], 95),
@@ -1173,15 +1189,26 @@ def summary_statistics(output_dirs, rundirs_allparams_df, fiber_ends_summary_all
                     output_dir].loc[run].loc[:5]['bending_energy'].mean()
             }
 
-            if (output_dir,rundir) in myo_binding_events.index:
+            if output_dir not in myo_binding_events.reset_index()['param_sweep'].unique():
+                print(output_dir+' skipped because no myo binding')
+                continue
+            if run not in myo_binding_events.loc[output_dir].reset_index()['run'].unique():
+                print(output_dir+' '+run+' skipped because no myo binding')
+                continue
 
-                for measurement in list(myo_binding_events):
-                    summaries_dict[run][measurement+'_max'] = np.max(
-                        myo_binding_events.loc[(output_dir,rundir)][measurement])
-                    summaries_dict[run][measurement+'_mean'] = np.mean(
-                        myo_binding_events.loc[(output_dir,rundir)][measurement])
-                    summaries_dict[run][measurement+'_median'] = np.median(
-                        myo_binding_events.loc[(output_dir,rundir)][measurement])
+            summaries_dict[run]['myo_binding_events'] = len(myo_binding_events.loc[
+                    output_dir].loc[run])
+            for measurement in list(myo_binding_events):
+                summaries_dict[run][measurement+'_mean'] = myo_binding_events.loc[
+                    output_dir].loc[run][measurement].mean()
+                summaries_dict[run][measurement+'_median'] = myo_binding_events.loc[
+                    output_dir].loc[run][measurement].median()
+                summaries_dict[run][measurement+'_std'] = myo_binding_events.loc[
+                    output_dir].loc[run][measurement].std()
+                summaries_dict[run][measurement+'_max'] = myo_binding_events.loc[
+                    output_dir].loc[run][measurement].max()
+                summaries_dict[run][measurement+'_sum'] = myo_binding_events.loc[
+                    output_dir].loc[run][measurement].sum()
 
         summaries_df = pd.DataFrame.from_dict(summaries_dict, orient='index')
         summaries_list.append(summaries_df)
@@ -1199,6 +1226,11 @@ def group_summaries(config_unique, config_groups, summaries):
 
     grouped_summaries_list=[]
     grouped_summaries_keys=[]
+
+    n = summary_groups['sim_length'].count()
+    grouped_summaries_list.append(n)
+    grouped_summaries_keys.append('sim_count')
+
     for statistic in list(summaries):
         stat_mean = summary_groups[statistic].mean()
         stat_std = summary_groups[statistic].std(ddof=1)
@@ -1212,11 +1244,15 @@ def group_summaries(config_unique, config_groups, summaries):
         grouped_summaries_list.append(margin_of_error)
         grouped_summaries_keys.append(statistic+'_ci95')
 
-    grouped_summaries_list.append(n)
-    grouped_summaries_keys.append('sim_count')
-
     grouped_summaries = pd.concat(grouped_summaries_list, axis=1,
                                 keys = grouped_summaries_keys).reset_index()
+
+    grouped_summaries['ratio_associated_mass_count'] =  \
+        grouped_summaries['mass_associated_last5s_mean_mean'] \
+        /grouped_summaries['count_associated_last5s_mean_mean']
+    grouped_summaries['distance_parameter'] = ufpN_to_dnm(
+        grouped_summaries['myosin_unbinding_force'])
+    grouped_summaries['distance_parameter'].replace([np.inf, -np.inf], 0, inplace=True)
     plusmyo_grouped_summaries = grouped_summaries.loc[grouped_summaries['membrane_myosin_number']>0]
     nomyo_grouped_summaries = grouped_summaries.loc[grouped_summaries['membrane_myosin_number']==0]
     motile_grouped_summaries = plusmyo_grouped_summaries.loc[
@@ -1276,3 +1312,81 @@ def get_final_bound_hip1r(output_dirs, rundirs_allparams_df,
     final_bound_hip1r_allparams = pd.concat(final_bound_hip1r_list, keys = output_dirs,
                                     names = ['param_sweep','run', 'time', 'hip1r_id'])
     return(final_bound_hip1r_allparams)
+
+
+def bound_myosins(rundirs_allparams_df, membrane_myosin_allparams):
+
+    myos_bound_list = []
+    filtered_myo_bound = membrane_myosin_allparams.loc[membrane_myosin_allparams['state']==1]
+    output_dirs =  membrane_myosin_allparams.reset_index()['param_sweep'].unique()
+
+    for output_dir in output_dirs:
+        rundirs = rundirs_allparams_df.loc[output_dir]
+        myos_bound_allruns = []
+        for rundir in rundirs:
+            if rundir == 'empty':
+                continue
+            myos_bound_run = membrane_myosin_allparams.loc[output_dir].loc[rundir]
+            timepoints = myos_bound_run.reset_index()['time'].unique()
+            myos_bound_alltimes = {}
+            for timepoint in timepoints:
+                myos_timepoint = myos_bound_run.loc[timepoint]
+                myos_bound_timepoint = myos_timepoint.loc[myos_timepoint['state']==1]['state'].count()
+                myos_bound_alltimes[timepoint]=myos_bound_timepoint
+            myos_bound_alltimes_df = pd.Series(myos_bound_alltimes,name='bound_myosins')
+            myos_bound_allruns.append(myos_bound_alltimes_df)
+            #print( "finished parsing " + rundir)
+        myos_bound_allruns_df = pd.concat(myos_bound_allruns, keys = rundirs,
+                                    names = ['run', 'time'])
+        myos_bound_list.append(myos_bound_allruns_df)
+        print( "finished parsing " + output_dir)
+
+    myos_bound_allparams = pd.concat(myos_bound_list, keys = output_dirs,
+                                    names = ['param_sweep','run', 'time'])
+    return(myos_bound_allparams)
+
+def retraction_analysis(solid_allparams,end_tp=10,window=10,order=4):
+    retractions_list = []
+    output_dirs =  solid_allparams.reset_index()['param_sweep'].unique()
+
+    for output_dir in output_dirs:
+        rundirs = rundirs_allparams_df.loc[output_dir]
+        retractions_allruns = []
+        retractions_dict={}
+        for rundir in rundirs:
+            if rundir == 'empty':
+                continue
+            solid_run = solid_allparams.loc[output_dir].loc[rundir].loc[:end_tp]
+            x = solid_run.reset_index()['time']
+            if x.max() < 10:
+                continue
+            y = solid_run['internalization']*1000
+            yhat = savgol_filter(y, window, order)
+            minima = find_peaks(-yhat)[0]
+            maxima = find_peaks(yhat)[0]
+            if len(minima) < 1 or len(maxima) < 1:
+                retraction_times=0.1*[]
+                retraction_distances=[]
+            elif minima[0]>maxima[0]:
+                retraction_times=0.1*(minima-maxima[:len(minima)])
+                retraction_distances=yhat[maxima[:len(minima)]]-yhat[minima]
+            elif minima[0]<maxima[0]:
+                retraction_times=0.1*(minima[1:]-maxima[:len(minima)-1])
+                retraction_distances=yhat[maxima[:len(minima)-1]]-yhat[minima[1:]]
+            retraction_rates = retraction_distances/retraction_times
+            retractions_dict[rundir]={
+                'retraction_count':len(retraction_times),
+                'retraction_time_sum':sum(retraction_times),
+                'retraction_distance_sum':sum(retraction_distances),
+                'retraction_rate_mean':np.mean(retraction_rates),
+                'retraction_rate_std':np.std(retraction_rates)
+            }
+
+        retractions_allruns_df = pd.DataFrame.from_dict(retractions_dict,orient='index')
+        retractions_list.append(retractions_allruns_df)
+        print( "finished parsing " + output_dir)
+
+    retractions_allparams = pd.concat(retractions_list, keys = output_dirs,
+                                    names = ['param_sweep','run'])
+
+    return(retractions_allparams)
