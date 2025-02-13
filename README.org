@@ -1,0 +1,14 @@
+#+TITLE: ferrin_cme_myosin_cytosim
+
+Code associated with Ferrin et al. manuscript /insert manuscript here/
+
+
+NOTE: Python-based analyses were originally written and executed in emacs org documents, then
+converted to jupyter notebooks for sharing. These conversions have their quirks
+so two converted versions for the relevant notebooks exist:
+- Files ending in ~orgparse.ipynb~: converted using the =orgparse= library.
+  These contain code that can be directly run in an interactive session, though
+  much of the original formatting is lost.
+- Files ending in ~pandoc.ipynb~: converted using =pandoc=. These are nicer to
+  look at, but are ultimately a single =markdown= cell and thus code cannot be
+  run like a typical jupyter notebook.
