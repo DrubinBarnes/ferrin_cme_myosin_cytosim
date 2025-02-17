@@ -12,3 +12,50 @@ so two converted versions for the relevant notebooks exist:
 - Files ending in ~pandoc.ipynb~: converted using =pandoc=. These are nicer to
   look at, but are ultimately a single =markdown= cell and thus code cannot be
   run like a typical jupyter notebook.
+
+* Running simulations
+
+example of submitting a batch job to the cluster:
+
+#+begin_quote bash
+main_simulations/simulations$ bash cytosim_dblab/configGenerator.sh 1 6.12.0
+6.12.00000.cym
+6.12.00001.cym
+6.12.00002.cym
+6.12.00003.cym
+made and moved 6.12.0
+Do you want to send it up to the server? [Y/N] Y
+sending up to server
+(ferrinm@dtn.brc.berkeley.edu) Password:
+6.12.00000.cym                                         100%   21KB   2.1MB/s   00:00
+6.12.00001.cym                                         100%   21KB   5.2MB/s   00:00
+6.12.00002.cym                                         100%   21KB   5.5MB/s   00:00
+6.12.00003.cym                                         100%   21KB   5.2MB/s   00:00
+Do you want to visit the server? [Y/N] Y
+visiting server
+(ferrinm@brc.berkeley.edu) Password:
+Last login: Sat Jul  8 11:40:21 2023 from 10.142.247.92
+[ferrinm@ln000 ~]$ cd /global/scratch/users/ferrinm/simulations
+[ferrinm@ln000 simulations]$ ls
+6.11.1	       6.11.8	      6.12.4	    cytosimParallelBash.sh
+6.11.1_output  6.11.8_output  6.12.5	    cytosimParallelBash_2d.sh
+6.11.2	       6.11.9	      6.12.6	    folder_ID.sh
+6.11.2_output  6.11.9_output  6.12.7	    iterateNumbers.sh
+6.11.3	       6.12.0	      6.12.8	    module_load.sh
+6.11.3_output  6.12.1	      6.12.9	    nbRepeats.sh
+6.11.4	       6.12.10	      6.9.5	    runParallelBash.sh
+6.11.4_output  6.12.11	      6.9.5_output  runParallelBash_2d.sh
+6.11.6	       6.12.12	      6.9.6	    savioParallelCym.sh
+6.11.6_output  6.12.1_output  6.9.6_output  savioParallelCym_2d.sh
+6.11.7	       6.12.2	      8.1.1
+6.11.7_output  6.12.3	      8.1.1_output
+[ferrinm@ln000 simulations]$ bash savioParallelCym.sh 6.12.0 12
+6.12.0_output
+2 arguments
+12 repeats
+I found 4 cym files
+48 total simulations to run
+2 nodes used
+24 tasks per node
+Submitted batch job 14881228
+#+end_quote
