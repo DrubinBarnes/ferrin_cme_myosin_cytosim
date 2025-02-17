@@ -1,14 +1,18 @@
 #!/bin/bash
-python ~/rclone_google_drive/grad_school/db_lab/code/cytosim_dblab/cytosim/py/preconfig $1 "$2.cym.tpl"
-mkdir -p ~/rclone_google_drive/grad_school/db_lab/code/savio/simulations/$2
-mv "$2"0* ~/rclone_google_drive/grad_school/db_lab/code/savio/simulations/$2
+python ~/google_drive/grad_school/db_lab/code/cytosim_dblab/ltpbukem/py/preconfig $1 "$2.cym.tpl"
+# mkdir -p ~/google_drive/grad_school/db_lab/code/savio/simulations/$2
+# mv "$2"0* ~/google_drive/grad_school/db_lab/code/savio/simulations/$2
+mkdir $2
+mv "$2"0* $2
 echo "made and moved $2"
 read -n1 -p "Do you want to send it up to the server? [Y/N] " answer
 case $answer in
 	Y | y) echo
 		   echo "sending up to server"
 		   
-		   scp -r ~/rclone_google_drive/grad_school/db_lab/code/savio/simulations/$2 ferrinm@dtn.brc.berkeley.edu:~/simulations/;;
+		   # scp -r ~/google_drive/grad_school/db_lab/code/savio/simulations/$2 ferrinm@dtn.brc.berkeley.edu:~/simulations/;;
+       # scp -r $2 ferrinm@dtn.brc.berkeley.edu:~/simulations/;;
+       scp -r $2 ferrinm@dtn.brc.berkeley.edu:/global/scratch/users/ferrinm/simulations/;;
 
 	N | n) echo 
 		   echo "goodbye"
@@ -20,7 +24,7 @@ case $answer in
 	Y | y) echo
 		   echo "visiting server"
 		   
-		   ssh ferrinm@hpc.brc.berkeley.edu:~/simulations/;;
+		   ssh ferrinm@brc.berkeley.edu;;
 
 	N | n) echo 
 		   echo "goodbye"

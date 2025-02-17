@@ -1,0 +1,3 @@
+#!/bin/bash 
+module load intel/2016.4.072 openmpi blas lapack && folder_ID=$(./folder_ID.sh) && nbRepeats=$(./nbRepeats.sh) && file_ID=$(./iterateNumbers.sh $(($HT_TASK_ID/$nbRepeats))) && repeatID=$(./iterateNumbers.sh $(($HT_TASK_ID%nbRepeats))) && cd "$folder_ID"_output"/run"$file_ID"_"$repeatID && /global/home/users/ferrinm/cytosim_dblab/cytosim/bin/sim ../../"$folder_ID"/"$folder_ID""$file_ID".cym
+# module load blas lapack intel/2016.4.072 openmpi && folder_ID=$(./folder_ID.sh) && file_ID=$(./iterateNumbers.sh $HT_TASK_ID) && repeatID=$(./iterateNumbers.sh 0) && cd "$folder_ID"_output"/run"$file_ID"_"$repeatID && /global/home/users/ferrinm/cytosim_dblab/cytosim/bin/sim ../../"$folder_ID"/"$folder_ID""$file_ID".cym
