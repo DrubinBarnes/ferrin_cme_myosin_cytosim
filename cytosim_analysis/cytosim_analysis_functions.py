@@ -1134,6 +1134,8 @@ def summary_statistics(output_dirs, rundirs_allparams_df, fiber_ends_summary_all
                     output_dir].loc[run].loc[:5]['mass_associated'].mean(),
                 'growth_attenuation_sum' : fiber_ends_summary_allparams.loc[
                     output_dir].loc[run]['growth_attenuation'].sum(),
+                'growth_attenuation_cumsum_max' : np.max(fiber_ends_summary_allparams.loc[
+                    output_dir].loc[run]['growth_attenuation'].cumsum()),
 
                 'length_total_mean_95per' : np.percentile(fiber_ends_summary_allparams.loc[
                     output_dir].loc[run]['length_total_mean'], 95),
