@@ -2,20 +2,17 @@
 
 Code associated with Ferrin et al. manuscript /insert manuscript here/
 
-
-NOTE: Python-based analyses were originally written and executed in emacs org documents, then
-converted to jupyter notebooks for sharing. These conversions have their quirks
-so two converted versions for the relevant notebooks exist:
-- Files ending in ~orgparse.ipynb~: converted using the =orgparse= library.
-  These contain code that can be directly run in an interactive session, though
-  much of the original formatting is lost.
-- Files ending in ~pandoc.ipynb~: converted using =pandoc=. These are nicer to
-  look at, but are ultimately a single =markdown= cell and thus code cannot be
-  run like a typical jupyter notebook.
-
 * Running simulations
+The source code for installing Cytosim is provided here:
+- [[file:cytosim_dblab/3d/][3D version]] (for endocytosis simulations)
+- [[file:cytosim_dblab/2d/][2D version]] (for gliding assay simulations)
 
-example of submitting a batch job to the cluster:
+Scripts for automatically generating systematic parameter sweeps and running
+simulations on a high-performance computing cluster are provided in the
+directory [[file:cytosim_dblab/]].
+
+Example of submitting a batch job to the cluster, starting from the single
+configuration file [[file:main_simulations/simulations/6.12.0.cym.tpl]]:
 
 #+begin_src bash
 main_simulations/simulations$ bash cytosim_dblab/configGenerator.sh 1 6.12.0
@@ -59,3 +56,27 @@ I found 4 cym files
 24 tasks per node
 Submitted batch job 14881228
 #+end_src
+* Analyzing simulations
+
+The important functions for parsing simulation outputs and analyzing results are
+in the file [[file:cytosim_analysis/cytosim_analysis_functions.py]]. Analysis is
+actually performed in notebooks in this repository, where these functions are
+called and then results are plotted. Figures for all main figures and most
+supplemental figures were generated in [[file:main_simulations/]], the remaining
+supplemental figures were generated in [[file:supplemental_simulations/]].
+
+These notebooks cannot be run from this repository as-is, because the simulation
+outputs require too much disk space and thus are not included. These outputs may
+be provided upon request.
+
+NOTE: Python-based analyses were originally written and executed in emacs org
+documents, then converted to jupyter notebooks for sharing. These conversions
+have their quirks so two converted versions for the relevant notebooks exist:
+- Files ending in ~orgparse.ipynb~: converted using the =orgparse= library.
+  These contain code that can be directly run in an interactive session, though
+  much of the original formatting is lost.
+- Files ending in ~pandoc.ipynb~: converted using =pandoc=. These are nicer to
+  look at, but are ultimately a single =markdown= cell and thus code cannot be
+  run like a typical jupyter notebook.
+
+There are also =org= and =markdown= files directly exported from each analysis document.
