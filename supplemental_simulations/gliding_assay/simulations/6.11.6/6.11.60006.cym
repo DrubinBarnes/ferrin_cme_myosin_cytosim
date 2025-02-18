@@ -1,0 +1,86 @@
+
+
+
+set simul glide
+{
+    time_step = 0.001
+    viscosity = 1
+    % toggle steric
+    steric = 1
+    display = ( style=2 )
+}
+
+set space cell
+{
+    geometry = ( periodic 10 10)
+}
+
+new space cell
+
+set fiber actin
+{
+    rigidity = 0.041 % which is a persistence length of 10 µm. see mccullough de la cruz 2008
+    segmentation = 0.01
+    display = {
+        line_width = 2
+        line_style = 1
+        point_size = 8
+        point_style = 2
+    }
+    steric = 1
+    steric_radius = 0.008
+}
+
+set hand myosin
+{
+    binding_rate = 3
+    binding_range = 0.004
+    unbinding_rate = 67.6
+    unbinding_force = -3.67
+
+    activity = mighty
+    max_speed = 5
+    stall_force = 100000
+    limit_speed = 1
+    display = { size=6; color=red; }
+}
+
+set single membrane_myosin
+{
+    hand = myosin
+    stiffness = 40
+    activity = fixed
+}
+
+new 10 fiber actin
+{
+    length = 1
+}
+
+new 10 fiber actin
+{
+        length = 5
+}
+
+new 5 fiber actin
+{
+        length = 10
+}
+
+new 100000 single membrane_myosin
+
+set simul:display gliding
+{
+    label = (100 pN/um stiffness -)
+
+    %delay = 10
+    %tiled = 1
+    point_size = 6
+    style = 2
+}
+
+run simul *
+{
+    nb_steps = 60000
+    nb_frames = 600
+}
