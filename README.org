@@ -17,7 +17,7 @@ so two converted versions for the relevant notebooks exist:
 
 example of submitting a batch job to the cluster:
 
-#+begin_quote bash
+#+begin_src bash
 main_simulations/simulations$ bash cytosim_dblab/configGenerator.sh 1 6.12.0
 6.12.00000.cym
 6.12.00001.cym
@@ -58,4 +58,4 @@ I found 4 cym files
 2 nodes used
 24 tasks per node
 Submitted batch job 14881228
-#+end_quote
+#+end_src
