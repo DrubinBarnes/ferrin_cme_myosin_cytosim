@@ -1,4 +1,4 @@
-# Created 2025-02-17 Mon 18:11
+# Created 2025-05-07 Wed 14:17
 #+title: 6.11 analysis
 #+author: Max Ferrin
 #+property: header-args :exports both :results raw drawer :async t :eval no-export :cache no :tangle no
@@ -137,7 +137,7 @@ org_to_ipynb("6.11_analysis.org",
 #+end_src
 
 #+results: 
-: d396eef9bd7000e8d110afc4624aa207
+: 627097af9e3800a99b0fb311a0cddf83
 
 
 
@@ -154,22 +154,22 @@ nil:END:
 #+end_src
 
 #+results: 
-: 3266cfecc96d1044e6589ede6bb79432
+: 046b7164b660d8e1108c4c5b2cbfd5b2
 ** export to markdown document
 #+begin_src emacs-lisp :tangle no
 (org-md-export-to-markdown)
 #+end_src
 
 #+results: 
-: 6e4588c0990cca7fb6ad29f883d8fb96
+: bce56a6f62f06dc21a3b50f4c8338530
 * figure generation index
 
 | figure | panel | link                                                    |
 |--------+-------+---------------------------------------------------------|
 | S2     | E     | [[id:07413486-9b24-4374-a154-96cef8d1f299][line plots]] |
-| S2     | E     | [[id:07413486-9b24-4374-a154-96cef8d1f299][line plots]] |
-| S2     | E     | [[id:07413486-9b24-4374-a154-96cef8d1f299][line plots]] |
-| S2     | E     | [[id:07413486-9b24-4374-a154-96cef8d1f299][line plots]] |
+| S2     | F     | [[id:07413486-9b24-4374-a154-96cef8d1f299][line plots]] |
+| S2     | G     | [[id:07413486-9b24-4374-a154-96cef8d1f299][line plots]] |
+| S2     | H     | [[id:07413486-9b24-4374-a154-96cef8d1f299][line plots]] |
 * configuration
 ** set global variables
 #+begin_src python

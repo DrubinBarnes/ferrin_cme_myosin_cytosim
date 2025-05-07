@@ -1,52 +1,52 @@
 
 # Table of Contents
 
-1.  [export this to other file formats](#orgc5102cf)
-    1.  [convert to jupyter notebook](#orgfff1930)
-        1.  [using pandoc](#org0a5a7b2)
-        2.  [using orgparse](#org859d54e)
-    2.  [export to org document](#orga510bca)
-    3.  [export to markdown document](#orgc7e661d)
-2.  [figure generation index](#orgdb5cc01)
-3.  [configuration](#org2bc0161)
-    1.  [set global variables](#org55757bb)
-    2.  [load and configure libraries](#org3cd8ca1)
-    3.  [set working directories](#orged6afe4)
-    4.  [load custom functions](#org4303290)
-4.  [find directories that have outputs or config files](#org7b9988a)
-5.  [report simulations](#org5ba656a)
-6.  [read in reports](#org23a986c)
-7.  [read simulation properties](#orgcc14bb1)
-    1.  [put all properties and configs into dataframes](#org5f349d9)
-    2.  [filter for properties that vary among simulations](#org5f1d83a)
-8.  [parse results into dataframe](#org93d41e7)
-    1.  [solid positions](#org8408124)
-    2.  [all hip1r](#org4c71f94)
-    3.  [all myosin](#orgfed598e)
-    4.  [fiber forces](#orgca661f1)
-    5.  [fiber ends](#orgd2f29ae)
-    6.  [merge positions with run properties/configs](#orgc763a5d)
-        1.  [solid](#org91be0b9)
-        2.  [myosin](#org47db235)
-    7.  [write dataframes to file](#org9b53855)
-9.  [load in previously parsed dataframes](#org4d9d282)
-10. [Analyze 95 percentile](#org0e47fbf)
-11. [Analyze actin density](#orgef85802)
-    1.  [total actin at final timepoint](#orgc800595)
-12. [plot results](#org4c17f10)
-    1.  [internalization](#org9f6ebce)
-        1.  [all runs on separate plots](#org6e038ed)
-        2.  [means of runs with same properties](#orgb707dea)
-        3.  [means of individual parameter sweeps](#org80578fc)
-    2.  [cumulative histogram](#orgb9837da)
-    3.  [plot 95th percentile internalization vs. parameter sweeps](#org4234811)
-        1.  [scatterplot overlaid points](#org9016fd7)
-        2.  [average scatterplot](#org7587f9b)
-        3.  [line plots](#orgde3f65f)
+1.  [export this to other file formats](#org1d6e141)
+    1.  [convert to jupyter notebook](#orga6adba2)
+        1.  [using pandoc](#org574a250)
+        2.  [using orgparse](#orgd1abb84)
+    2.  [export to org document](#org26f3248)
+    3.  [export to markdown document](#org5b2dd0c)
+2.  [figure generation index](#org4b0b7f7)
+3.  [configuration](#orgba16e35)
+    1.  [set global variables](#org074739d)
+    2.  [load and configure libraries](#orge7a594e)
+    3.  [set working directories](#org7ddfeff)
+    4.  [load custom functions](#orgbe7688a)
+4.  [find directories that have outputs or config files](#org7a379e4)
+5.  [report simulations](#orgea37811)
+6.  [read in reports](#org3608e58)
+7.  [read simulation properties](#org435441e)
+    1.  [put all properties and configs into dataframes](#org7fa1907)
+    2.  [filter for properties that vary among simulations](#orgeb929ac)
+8.  [parse results into dataframe](#org5639965)
+    1.  [solid positions](#org30ba405)
+    2.  [all hip1r](#orgd8beb59)
+    3.  [all myosin](#org394715c)
+    4.  [fiber forces](#org20025a8)
+    5.  [fiber ends](#org2580a94)
+    6.  [merge positions with run properties/configs](#org4290ccb)
+        1.  [solid](#org6c8d22c)
+        2.  [myosin](#orgae952c5)
+    7.  [write dataframes to file](#orgb79b510)
+9.  [load in previously parsed dataframes](#org4c05d0d)
+10. [Analyze 95 percentile](#org5052e5d)
+11. [Analyze actin density](#orga339bfc)
+    1.  [total actin at final timepoint](#org4d09508)
+12. [plot results](#org3c58e2e)
+    1.  [internalization](#orgc2b62da)
+        1.  [all runs on separate plots](#org7fdb1d1)
+        2.  [means of runs with same properties](#org22d1340)
+        3.  [means of individual parameter sweeps](#orgca6230a)
+    2.  [cumulative histogram](#org8c124b5)
+    3.  [plot 95th percentile internalization vs. parameter sweeps](#orgc07c166)
+        1.  [scatterplot overlaid points](#orgf037339)
+        2.  [average scatterplot](#orgcfa367f)
+        3.  [line plots](#org795746d)
 
 
 
-<a id="orgc5102cf"></a>
+<a id="org1d6e141"></a>
 
 # export this to other file formats
 
@@ -56,15 +56,15 @@ where the analysis happens
 
 Due to this difference in directory structure, anyone else using these scripts
 will have to make sure the locations of their data are specified correctly in
-the [set working directories](#orged6afe4) scetion.
+the [set working directories](#org7ddfeff) scetion.
 
 
-<a id="orgfff1930"></a>
+<a id="orga6adba2"></a>
 
 ## convert to jupyter notebook
 
 
-<a id="org0a5a7b2"></a>
+<a id="org574a250"></a>
 
 ### using pandoc
 
@@ -73,7 +73,7 @@ this looks nice but it&rsquo;s just a big markdown block
     pandoc 6.11_analysis.org -o parametersensitivity_analysis_pandoc.ipynb
 
 
-<a id="org859d54e"></a>
+<a id="orgd1abb84"></a>
 
 ### using orgparse
 
@@ -183,30 +183,30 @@ doesn&rsquo;t work
 
     (org-babel-tangle)
 
-    d396eef9bd7000e8d110afc4624aa207
+    627097af9e3800a99b0fb311a0cddf83
 
     python convert_org_to_ipynb.py
 
 
-<a id="orga510bca"></a>
+<a id="org26f3248"></a>
 
 ## export to org document
 
     (org-org-export-to-org)
 
-    3266cfecc96d1044e6589ede6bb79432
+    046b7164b660d8e1108c4c5b2cbfd5b2
 
 
-<a id="orgc7e661d"></a>
+<a id="org5b2dd0c"></a>
 
 ## export to markdown document
 
     (org-md-export-to-markdown)
 
-    6e4588c0990cca7fb6ad29f883d8fb96
+    bce56a6f62f06dc21a3b50f4c8338530
 
 
-<a id="orgdb5cc01"></a>
+<a id="org4b0b7f7"></a>
 
 # figure generation index
 
@@ -231,36 +231,36 @@ doesn&rsquo;t work
 <tr>
 <td class="org-left">S2</td>
 <td class="org-left">E</td>
-<td class="org-left"><a href="#orgde3f65f">line plots</a></td>
+<td class="org-left"><a href="#org795746d">line plots</a></td>
 </tr>
 
 <tr>
 <td class="org-left">S2</td>
-<td class="org-left">E</td>
-<td class="org-left"><a href="#orgde3f65f">line plots</a></td>
+<td class="org-left">F</td>
+<td class="org-left"><a href="#org795746d">line plots</a></td>
 </tr>
 
 <tr>
 <td class="org-left">S2</td>
-<td class="org-left">E</td>
-<td class="org-left"><a href="#orgde3f65f">line plots</a></td>
+<td class="org-left">G</td>
+<td class="org-left"><a href="#org795746d">line plots</a></td>
 </tr>
 
 <tr>
 <td class="org-left">S2</td>
-<td class="org-left">E</td>
-<td class="org-left"><a href="#orgde3f65f">line plots</a></td>
+<td class="org-left">H</td>
+<td class="org-left"><a href="#org795746d">line plots</a></td>
 </tr>
 </tbody>
 </table>
 
 
-<a id="org2bc0161"></a>
+<a id="orgba16e35"></a>
 
 # configuration
 
 
-<a id="org55757bb"></a>
+<a id="org074739d"></a>
 
 ## set global variables
 
@@ -271,7 +271,7 @@ doesn&rsquo;t work
     save_dataframes = 'yes'
 
 
-<a id="org3cd8ca1"></a>
+<a id="orge7a594e"></a>
 
 ## load and configure libraries
 
@@ -335,7 +335,7 @@ doesn&rsquo;t work
     <Figure size 640x480 with 0 Axes>
 
 
-<a id="orged6afe4"></a>
+<a id="org7ddfeff"></a>
 
 ## set working directories
 
@@ -378,7 +378,7 @@ doesn&rsquo;t work
         os.mkdir('dataframes')
 
 
-<a id="org4303290"></a>
+<a id="orgbe7688a"></a>
 
 ## load custom functions
 
@@ -393,7 +393,7 @@ doesn&rsquo;t work
     <module 'cytosim_analysis' from '/home/maxferrin/SynologyDrive/google_drive/grad_school/db_lab/code/analysis/20230610_6.11_parameter_sensitivity/../cytosim_analysis/__init__.py'>
 
 
-<a id="org7b9988a"></a>
+<a id="org7a379e4"></a>
 
 # find directories that have outputs or config files
 
@@ -403,7 +403,7 @@ doesn&rsquo;t work
     ['6.11.9_output', '6.11.8_output', '6.11.4_output', '6.11.1_output', '6.11.2_output', '6.11.7_output', '6.11.3_output'] ['6.11.2', '6.11.7', '6.11.3', '6.11.8', '6.11.1', '6.11.9', '6.11.4']
 
 
-<a id="org5ba656a"></a>
+<a id="orgea37811"></a>
 
 # report simulations
 
@@ -699,7 +699,7 @@ doesn&rsquo;t work
     finished reporting 20230504_6.6.5_myominimal_output
 
 
-<a id="org23a986c"></a>
+<a id="org3608e58"></a>
 
 # read in reports
 
@@ -739,12 +739,12 @@ doesn&rsquo;t work
     finished reporting 6.11.3_output
 
 
-<a id="orgcc14bb1"></a>
+<a id="org435441e"></a>
 
 # read simulation properties
 
 
-<a id="org5f349d9"></a>
+<a id="org7fa1907"></a>
 
 ## put all properties and configs into dataframes
 
@@ -753,7 +753,7 @@ doesn&rsquo;t work
         properties_allruns_allparams, configs_allruns_allparams)
 
 
-<a id="org5f1d83a"></a>
+<a id="orgeb929ac"></a>
 
 ## filter for properties that vary among simulations
 
@@ -921,12 +921,12 @@ doesn&rsquo;t work
 </table>
 
 
-<a id="org93d41e7"></a>
+<a id="org5639965"></a>
 
 # parse results into dataframe
 
 
-<a id="org8408124"></a>
+<a id="org30ba405"></a>
 
 ## solid positions
 
@@ -1020,7 +1020,7 @@ doesn&rsquo;t work
 </table>
 
 
-<a id="org4c71f94"></a>
+<a id="orgd8beb59"></a>
 
 ## all hip1r
 
@@ -1171,7 +1171,7 @@ doesn&rsquo;t work
 </table>
 
 
-<a id="orgfed598e"></a>
+<a id="org394715c"></a>
 
 ## all myosin
 
@@ -1188,7 +1188,7 @@ doesn&rsquo;t work
     NameError: name 'rundirs_allparams' is not defined
 
 
-<a id="orgca661f1"></a>
+<a id="org20025a8"></a>
 
 ## fiber forces
 
@@ -1205,7 +1205,7 @@ doesn&rsquo;t work
     NameError: name 'rundirs_allparams' is not defined
 
 
-<a id="orgd2f29ae"></a>
+<a id="org2580a94"></a>
 
 ## fiber ends
 
@@ -1222,12 +1222,12 @@ doesn&rsquo;t work
     NameError: name 'rundirs_allparams' is not defined
 
 
-<a id="orgc763a5d"></a>
+<a id="org4290ccb"></a>
 
 ## merge positions with run properties/configs
 
 
-<a id="org91be0b9"></a>
+<a id="org6c8d22c"></a>
 
 ### solid
 
@@ -1277,7 +1277,7 @@ doesn&rsquo;t work
     Name: internalization, dtype: float64
 
 
-<a id="org47db235"></a>
+<a id="orgae952c5"></a>
 
 ### myosin
 
@@ -1299,7 +1299,7 @@ doesn&rsquo;t work
     NameError: name 'config_unique' is not defined
 
 
-<a id="org9b53855"></a>
+<a id="orgb79b510"></a>
 
 ## write dataframes to file
 
@@ -1314,7 +1314,7 @@ doesn&rsquo;t work
         properties_unique.to_pickle(dataframes_dir+'properties_unique.pkl')
 
 
-<a id="org4d9d282"></a>
+<a id="org4c05d0d"></a>
 
 # load in previously parsed dataframes
 
@@ -1401,7 +1401,7 @@ doesn&rsquo;t work
 </table>
 
 
-<a id="org0e47fbf"></a>
+<a id="org5052e5d"></a>
 
 # Analyze 95 percentile
 
@@ -1454,12 +1454,12 @@ doesn&rsquo;t work
 </table>
 
 
-<a id="orgef85802"></a>
+<a id="orga339bfc"></a>
 
 # Analyze actin density
 
 
-<a id="orgc800595"></a>
+<a id="org4d09508"></a>
 
 ## total actin at final timepoint
 
@@ -1475,17 +1475,17 @@ doesn&rsquo;t work
     NameError: name 'forces_allparams' is not defined
 
 
-<a id="org4c17f10"></a>
+<a id="org3c58e2e"></a>
 
 # plot results
 
 
-<a id="org9f6ebce"></a>
+<a id="orgc2b62da"></a>
 
 ## internalization
 
 
-<a id="org6e038ed"></a>
+<a id="org7fdb1d1"></a>
 
 ### all runs on separate plots
 
@@ -1549,7 +1549,7 @@ doesn&rsquo;t work
 ![img](./.ob-jupyter/37370d2c98575b9cecedb7985ab78bc512907353.png)
 
 
-<a id="orgb707dea"></a>
+<a id="org22d1340"></a>
 
 ### means of runs with same properties
 
@@ -1638,7 +1638,7 @@ doesn&rsquo;t work
 ![img](./.ob-jupyter/a0ba74a131123d1a1abc8d4a6161e448cccb9c1a.png)
 
 
-<a id="org80578fc"></a>
+<a id="orgca6230a"></a>
 
 ### means of individual parameter sweeps
 
@@ -1753,7 +1753,7 @@ doesn&rsquo;t work
 ![img](./.ob-jupyter/2bdc9279dc02c4790c382f537edc1791f8e8748f.png)
 
 
-<a id="orgb9837da"></a>
+<a id="org8c124b5"></a>
 
 ## cumulative histogram
 
@@ -1986,7 +1986,7 @@ plot all cumulative histograms with 95 percentile internalization marked
 ![img](./.ob-jupyter/80ed16babf458a5c0dc02057cdd39a014aabd142.png)
 
 
-<a id="org4234811"></a>
+<a id="orgc07c166"></a>
 
 ## plot 95th percentile internalization vs. parameter sweeps
 
@@ -2257,7 +2257,7 @@ plot all cumulative histograms with 95 percentile internalization marked
     KeyError: 'membrane_myosin_number'
 
 
-<a id="org9016fd7"></a>
+<a id="orgf037339"></a>
 
 ### scatterplot overlaid points
 
@@ -2295,7 +2295,7 @@ plot all cumulative histograms with 95 percentile internalization marked
 ![img](./.ob-jupyter/7ccff35d5176910ba2dacadbb8b8a2360e6e65b3.png)
 
 
-<a id="org7587f9b"></a>
+<a id="orgcfa367f"></a>
 
 ### average scatterplot
 
@@ -2434,7 +2434,7 @@ plot all cumulative histograms with 95 percentile internalization marked
         AttributeError: 'DataFrame' object has no attribute 'bud_confine'
 
 
-<a id="orgde3f65f"></a>
+<a id="org795746d"></a>
 
 ### line plots
 
