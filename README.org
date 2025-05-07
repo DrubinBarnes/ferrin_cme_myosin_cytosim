@@ -1,6 +1,10 @@
 #+TITLE: ferrin_cme_myosin_cytosim
 
-Code associated with Ferrin et al. manuscript /insert manuscript here/
+Code associated with Ferrin et al. 2025 manuscript /Force-insensitive myosin-I
+enhances endocytosis robustness through actin network-scale collective
+ratcheting/
+
+[[https://www.biorxiv.org/content/10.1101/2025.04.04.647278v1][bioRxiv preprint avialable here]]
 
 * Running simulations
 The source code for installing Cytosim is provided here:
