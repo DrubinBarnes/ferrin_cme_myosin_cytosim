@@ -1,34 +1,36 @@
 
 # Table of Contents
 
-1.  [export this to other file formats](#org981132f)
-    1.  [convert to jupyter notebook](#org2573baa)
-        1.  [using pandoc](#org68f05ed)
-        2.  [using orgparse](#orgd3757ec)
-    2.  [export to org document](#orgee58537)
-    3.  [export to markdown document](#orge46a246)
-2.  [figure generation index](#org782d634)
-3.  [configuration](#org4b7b984)
-    1.  [set global variables](#org709f0d9)
-    2.  [load and configure libraries](#org2559ff3)
-    3.  [set working directories](#orgec9cc7e)
-    4.  [load custom functions](#org04adb90)
-4.  [find directories that have outputs or config files](#org20643e8)
-5.  [report simulations](#org9922436)
-6.  [read simulation properties](#orgc923050)
-    1.  [put all properties and configs into dataframes](#org2a3798d)
-    2.  [filter for properties that vary among simulations](#org09047bb)
-7.  [parse results into dataframe](#orgd56305a)
-    1.  [fiber ends](#org04aa112)
-8.  [load in previously parsed dataframes](#org233edde)
-9.  [plot results](#org866b628)
-    1.  [actin plus end displacement](#orgd8583a2)
-        1.  [all parameters](#orgd7fc3f1)
-        2.  [final myo parameters](#org76fb487)
+1.  [export this to other file formats](#orgcf023d6)
+    1.  [convert to jupyter notebook](#orgcebaf9c)
+        1.  [using pandoc](#orgd61af31)
+        2.  [using orgparse](#orgf75a27e)
+    2.  [export to org document](#org64bfb43)
+    3.  [export to markdown document](#org0b67c03)
+2.  [figure generation index](#orgeea2f55)
+3.  [configuration](#org5244a0d)
+    1.  [set global variables](#orgf512f53)
+    2.  [load and configure libraries](#org07a5eb6)
+    3.  [set working directories](#org1c432eb)
+    4.  [load custom functions](#org508cff2)
+4.  [find directories that have outputs or config files](#org28d351d)
+5.  [report simulations](#org88ba5ca)
+6.  [read simulation properties](#org5436ea7)
+    1.  [put all properties and configs into dataframes](#org81842cb)
+    2.  [filter for properties that vary among simulations](#orgdb2857e)
+7.  [parse results into dataframe](#orgcd12a7f)
+    1.  [fiber ends](#org83622cb)
+8.  [load in previously parsed dataframes](#org47a5c4d)
+9.  [plot results](#org879131e)
+    1.  [actin plus end displacement vs. time](#org27d7ce5)
+        1.  [all parameters](#org51b8aa0)
+        2.  [final myo parameters](#orgf328cde)
+    2.  [heat map of average velocity](#org2ceaf51)
+    3.  [line plot of average velocity](#org5bb2ed6)
 
 
 
-<a id="org981132f"></a>
+<a id="orgcf023d6"></a>
 
 # export this to other file formats
 
@@ -38,15 +40,15 @@ where the analysis happens
 
 Due to this difference in directory structure, anyone else using these scripts
 will have to make sure the locations of their data are specified correctly in
-the [set working directories](#orgec9cc7e) section.
+the [set working directories](#org1c432eb) section.
 
 
-<a id="org2573baa"></a>
+<a id="orgcebaf9c"></a>
 
 ## convert to jupyter notebook
 
 
-<a id="org68f05ed"></a>
+<a id="orgd61af31"></a>
 
 ### using pandoc
 
@@ -55,7 +57,7 @@ this looks nice but it&rsquo;s just a big markdown block
     pandoc 6.11.6_analysis.org -o gliding_analysis_pandoc.ipynb
 
 
-<a id="orgd3757ec"></a>
+<a id="orgf75a27e"></a>
 
 ### using orgparse
 
@@ -165,21 +167,21 @@ doesn&rsquo;t work
 
     (org-babel-tangle)
 
-    c692b3bc6302671c75bffbd145877bfc
+    d801dac30f4ce9772b96db7e07ee6f2e
 
     python convert_org_to_ipynb.py
 
 
-<a id="orgee58537"></a>
+<a id="org64bfb43"></a>
 
 ## export to org document
 
     (org-org-export-to-org)
 
-    25bd31980825939f59716e42a7f65351
+    779034df5b081f6b2f77f4f5fb6522d5
 
 
-<a id="orge46a246"></a>
+<a id="org0b67c03"></a>
 
 ## export to markdown document
 
@@ -188,7 +190,7 @@ doesn&rsquo;t work
     6e4588c0990cca7fb6ad29f883d8fb96
 
 
-<a id="org782d634"></a>
+<a id="orgeea2f55"></a>
 
 # figure generation index
 
@@ -213,18 +215,30 @@ doesn&rsquo;t work
 <tr>
 <td class="org-left">S2</td>
 <td class="org-left">D</td>
-<td class="org-left"><a href="#org76fb487">final myo parameters</a></td>
+<td class="org-left"><a href="#orgf328cde">final myo parameters</a></td>
+</tr>
+
+<tr>
+<td class="org-left">S2</td>
+<td class="org-left">D</td>
+<td class="org-left"><a href="#org2ceaf51">heat map of average velocity</a></td>
+</tr>
+
+<tr>
+<td class="org-left">S2</td>
+<td class="org-left">D</td>
+<td class="org-left"><a href="#org5bb2ed6">line plot of average velocity</a></td>
 </tr>
 </tbody>
 </table>
 
 
-<a id="org4b7b984"></a>
+<a id="org5244a0d"></a>
 
 # configuration
 
 
-<a id="org709f0d9"></a>
+<a id="orgf512f53"></a>
 
 ## set global variables
 
@@ -235,7 +249,7 @@ doesn&rsquo;t work
     save_dataframes = 'yes'
 
 
-<a id="org2559ff3"></a>
+<a id="org07a5eb6"></a>
 
 ## load and configure libraries
 
@@ -257,6 +271,7 @@ doesn&rsquo;t work
     from matplotlib.colors import LogNorm
     from matplotlib.colors import SymLogNorm
     from matplotlib.cm import ScalarMappable
+    from matplotlib.ticker import FuncFormatter
     from scipy.stats import binned_statistic_2d
     from scipy import stats
     from scipy.signal import savgol_filter
@@ -264,6 +279,8 @@ doesn&rsquo;t work
     import textwrap
     from decimal import Decimal
     from scipy.stats import binned_statistic_2d
+    from scipy.stats import linregress
+    from scipy.stats import sem
     from matplotlib.font_manager import FontProperties
     import matplotlib.pyplot as plt  # plotting
     import matplotlib.colors as mcolors
@@ -294,12 +311,10 @@ doesn&rsquo;t work
     date = now.strftime('%Y%m%d')
     pref = date
 
-    /home/maxferrin/miniconda3/lib/python3.10/site-packages/pandas/core/arrays/masked.py:60: UserWarning: Pandas requires version '1.3.6' or newer of 'bottleneck' (version '1.3.5' currently installed).
-      from pandas.core import (
-    <Figure size 640x480 with 0 Axes>
+    <Figure size 600x500 with 0 Axes>
 
 
-<a id="orgec9cc7e"></a>
+<a id="org1c432eb"></a>
 
 ## set working directories
 
@@ -325,11 +340,12 @@ doesn&rsquo;t work
         drive_dir = '/Users/dblab/google_drive/'
     
     
-    working_dir = os.path.join(drive_dir, 'grad_school/db_lab/code/analysis/6.11.6_temp/')
+    working_dir = os.path.join(drive_dir, 'grad_school/db_lab/code/analysis/20230630_6.11.6_glidingrecapitulation/')
+    #working_dir = '/home/maxferrin/mount/trinity/home/google_drive/grad_school/db_lab/code/analysis/20230630_6.11.6_glidingrecapitulation/'
     cytosim_dir = os.path.join(drive_dir, 'grad_school/db_lab/code/cytosim_dblab/', machine)
     
     if machine == 'peeks':
-        working_dir = '/run/media/ferrin/Volume/max/analysis/6.11.6_temp/'
+        working_dir = '/run/media/ferrin/Volume/max/analysis/20230630_6.11.6_glidingrecapitulation/'
         cytosim_dir = '/home/ferrin/cytosim/'
     
     dataframes_dir = os.path.join(working_dir,'dataframes/')
@@ -342,7 +358,7 @@ doesn&rsquo;t work
         os.mkdir('dataframes')
 
 
-<a id="org04adb90"></a>
+<a id="org508cff2"></a>
 
 ## load custom functions
 
@@ -354,10 +370,10 @@ doesn&rsquo;t work
     from importlib import reload
     reload(sys.modules['cytosim_analysis'])
 
-    <module 'cytosim_analysis' from '/home/maxferrin/SynologyDrive/google_drive/grad_school/db_lab/code/analysis/6.11.6_temp/../cytosim_analysis/__init__.py'>
+    <module 'cytosim_analysis' from '/home/maxferrin/SynologyDrive/google_drive/grad_school/db_lab/code/analysis/20230508_6.6.5_myominimal/../cytosim_analysis/__init__.py'>
 
 
-<a id="org20643e8"></a>
+<a id="org28d351d"></a>
 
 # find directories that have outputs or config files
 
@@ -367,7 +383,7 @@ doesn&rsquo;t work
     ['6.11.6_output'] ['6.11.6']
 
 
-<a id="org9922436"></a>
+<a id="org88ba5ca"></a>
 
 # report simulations
 
@@ -383,12 +399,11 @@ this crashes
 
 this is better
 
-     properties_allruns_allparams, configs_allruns_allparams, \
-     fiber_ends_allruns_allparams, rundirs_allparams, \
-     total_runs = caf.report_fiber_ends(
+    properties_allruns_allparams, configs_allruns_allparams, \
+    fiber_ends_allruns_allparams, rundirs_allparams, \
+    total_runs = caf.report_fiber_ends(
          working_dir, output_dirs, config_dirs,
          cytosim_dir, report, replace_movies)
-    
     rundirs_allparams_df = pd.DataFrame.from_dict(rundirs_allparams, orient = 'index')
     if save_dataframes == 'yes':
         rundirs_allparams_df.to_pickle(dataframes_dir+'rundirs_allparams.pkl')
@@ -396,12 +411,12 @@ this is better
     finished reporting 6.11.6_output
 
 
-<a id="orgc923050"></a>
+<a id="org5436ea7"></a>
 
 # read simulation properties
 
 
-<a id="org2a3798d"></a>
+<a id="org81842cb"></a>
 
 ## put all properties and configs into dataframes
 
@@ -410,7 +425,7 @@ this is better
         properties_allruns_allparams, configs_allruns_allparams)
 
 
-<a id="org09047bb"></a>
+<a id="orgdb2857e"></a>
 
 ## filter for properties that vary among simulations
 
@@ -426,10 +441,47 @@ this is better
 
 <colgroup>
 <col  class="org-left">
+
+<col  class="org-right">
+
+<col  class="org-right">
 </colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">&#xa0;</th>
+<th scope="col" class="org-right">glide<sub>random</sub><sub>seed</sub></th>
+<th scope="col" class="org-right">membrane<sub>myosin</sub><sub>stiffness</sub></th>
+</tr>
+</thead>
 <tbody>
 <tr>
-<td class="org-left">(&rsquo;6.11.6<sub>output</sub>&rsquo;, &rsquo;run0019<sub>0000</sub>&rsquo;)</td>
+<td class="org-left">(&rsquo;6.11.6<sub>output</sub>&rsquo;, &rsquo;run0012<sub>0000</sub>&rsquo;)</td>
+<td class="org-right">1.29091e+09</td>
+<td class="org-right">40</td>
+</tr>
+
+<tr>
+<td class="org-left">(&rsquo;6.11.6<sub>output</sub>&rsquo;, &rsquo;run0007<sub>0000</sub>&rsquo;)</td>
+<td class="org-right">1.1413e+09</td>
+<td class="org-right">80</td>
+</tr>
+
+<tr>
+<td class="org-left">(&rsquo;6.11.6<sub>output</sub>&rsquo;, &rsquo;run0016<sub>0000</sub>&rsquo;)</td>
+<td class="org-right">9.18455e+08</td>
+<td class="org-right">640</td>
+</tr>
+
+<tr>
+<td class="org-left">(&rsquo;6.11.6<sub>output</sub>&rsquo;, &rsquo;run0004<sub>0000</sub>&rsquo;)</td>
+<td class="org-right">4.1467e+09</td>
+<td class="org-right">640</td>
+</tr>
+
+<tr>
+<td class="org-left">(&rsquo;6.11.6<sub>output</sub>&rsquo;, &rsquo;run0005<sub>0000</sub>&rsquo;)</td>
+<td class="org-right">2.63386e+07</td>
+<td class="org-right">1280</td>
 </tr>
 </tbody>
 </table>
@@ -447,21 +499,58 @@ this is better
 
 <colgroup>
 <col  class="org-left">
+
+<col  class="org-right">
+
+<col  class="org-right">
 </colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">&#xa0;</th>
+<th scope="col" class="org-right">membrane<sub>myosin</sub><sub>stiffness</sub></th>
+<th scope="col" class="org-right">membrane<sub>myosin</sub><sub>number</sub></th>
+</tr>
+</thead>
 <tbody>
 <tr>
-<td class="org-left">(&rsquo;6.11.6<sub>output</sub>&rsquo;, &rsquo;run0019<sub>0000</sub>&rsquo;)</td>
+<td class="org-left">(&rsquo;6.11.6<sub>output</sub>&rsquo;, &rsquo;run0012<sub>0000</sub>&rsquo;)</td>
+<td class="org-right">40</td>
+<td class="org-right">1e+06</td>
+</tr>
+
+<tr>
+<td class="org-left">(&rsquo;6.11.6<sub>output</sub>&rsquo;, &rsquo;run0007<sub>0000</sub>&rsquo;)</td>
+<td class="org-right">80</td>
+<td class="org-right">100000</td>
+</tr>
+
+<tr>
+<td class="org-left">(&rsquo;6.11.6<sub>output</sub>&rsquo;, &rsquo;run0016<sub>0000</sub>&rsquo;)</td>
+<td class="org-right">640</td>
+<td class="org-right">1e+06</td>
+</tr>
+
+<tr>
+<td class="org-left">(&rsquo;6.11.6<sub>output</sub>&rsquo;, &rsquo;run0004<sub>0000</sub>&rsquo;)</td>
+<td class="org-right">640</td>
+<td class="org-right">10000</td>
+</tr>
+
+<tr>
+<td class="org-left">(&rsquo;6.11.6<sub>output</sub>&rsquo;, &rsquo;run0005<sub>0000</sub>&rsquo;)</td>
+<td class="org-right">1280</td>
+<td class="org-right">10000</td>
 </tr>
 </tbody>
 </table>
 
 
-<a id="orgd56305a"></a>
+<a id="orgcd12a7f"></a>
 
 # parse results into dataframe
 
 
-<a id="org04aa112"></a>
+<a id="org83622cb"></a>
 
 ## fiber ends
 
@@ -526,94 +615,94 @@ this is better
 </thead>
 <tbody>
 <tr>
-<td class="org-left">(&rsquo;6.11.6<sub>output</sub>&rsquo;, &rsquo;run0019<sub>0000</sub>&rsquo;, 0.1, 17)</td>
-<td class="org-right">17</td>
-<td class="org-right">5</td>
+<td class="org-left">(&rsquo;6.11.6<sub>output</sub>&rsquo;, &rsquo;run0012<sub>0000</sub>&rsquo;, 0.1, 9)</td>
+<td class="org-right">9</td>
+<td class="org-right">1</td>
 <td class="org-right">0</td>
-<td class="org-right">2.97818</td>
-<td class="org-right">5.08422</td>
-<td class="org-right">0.98319</td>
-<td class="org-right">0.18268</td>
+<td class="org-right">4.37804</td>
+<td class="org-right">-5.9312</td>
+<td class="org-right">0.5723</td>
+<td class="org-right">-0.82006</td>
 <td class="org-right">0</td>
-<td class="org-right">7.74348</td>
-<td class="org-right">6.55944</td>
-<td class="org-right">0.96617</td>
-<td class="org-right">0.25792</td>
-<td class="org-right">10.1483</td>
+<td class="org-right">4.75198</td>
+<td class="org-right">-6.85142</td>
+<td class="org-right">0.26231</td>
+<td class="org-right">-0.96498</td>
+<td class="org-right">8.33806</td>
 </tr>
 
 <tr>
-<td class="org-left">(&rsquo;6.11.6<sub>output</sub>&rsquo;, &rsquo;run0019<sub>0000</sub>&rsquo;, 0.1, 14)</td>
-<td class="org-right">14</td>
+<td class="org-left">(&rsquo;6.11.6<sub>output</sub>&rsquo;, &rsquo;run0012<sub>0000</sub>&rsquo;, 0.1, 5)</td>
 <td class="org-right">5</td>
+<td class="org-right">1</td>
 <td class="org-right">0</td>
-<td class="org-right">5.25302</td>
-<td class="org-right">5.61874</td>
-<td class="org-right">0.45285</td>
-<td class="org-right">0.89159</td>
+<td class="org-right">-2.78723</td>
+<td class="org-right">-8.55029</td>
+<td class="org-right">0.70925</td>
+<td class="org-right">-0.70496</td>
 <td class="org-right">0</td>
-<td class="org-right">8.63113</td>
-<td class="org-right">9.27963</td>
-<td class="org-right">0.73223</td>
-<td class="org-right">0.68111</td>
-<td class="org-right">12.6731</td>
+<td class="org-right">-2.39566</td>
+<td class="org-right">-9.44762</td>
+<td class="org-right">0.25752</td>
+<td class="org-right">-0.96626</td>
+<td class="org-right">9.74663</td>
 </tr>
 
 <tr>
-<td class="org-left">(&rsquo;6.11.6<sub>output</sub>&rsquo;, &rsquo;run0019<sub>0000</sub>&rsquo;, 0.1, 20)</td>
-<td class="org-right">20</td>
-<td class="org-right">5</td>
-<td class="org-right">0</td>
-<td class="org-right">2.36824</td>
-<td class="org-right">9.47717</td>
-<td class="org-right">0.9985</td>
-<td class="org-right">-0.05465</td>
-<td class="org-right">0</td>
-<td class="org-right">7.35264</td>
-<td class="org-right">9.20952</td>
-<td class="org-right">0.97208</td>
-<td class="org-right">-0.23451</td>
-<td class="org-right">11.7846</td>
-</tr>
-
-<tr>
-<td class="org-left">(&rsquo;6.11.6<sub>output</sub>&rsquo;, &rsquo;run0019<sub>0000</sub>&rsquo;, 0.1, 6)</td>
+<td class="org-left">(&rsquo;6.11.6<sub>output</sub>&rsquo;, &rsquo;run0012<sub>0000</sub>&rsquo;, 0.1, 6)</td>
 <td class="org-right">6</td>
 <td class="org-right">1</td>
 <td class="org-right">0</td>
-<td class="org-right">-3.85175</td>
-<td class="org-right">-9.35898</td>
-<td class="org-right">0.6247</td>
-<td class="org-right">-0.78087</td>
+<td class="org-right">1.71594</td>
+<td class="org-right">7.66453</td>
+<td class="org-right">0.94765</td>
+<td class="org-right">-0.31929</td>
 <td class="org-right">0</td>
-<td class="org-right">-3.07164</td>
-<td class="org-right">-9.97737</td>
-<td class="org-right">0.7782</td>
-<td class="org-right">-0.62799</td>
-<td class="org-right">10.4395</td>
+<td class="org-right">2.60265</td>
+<td class="org-right">7.2213</td>
+<td class="org-right">0.75858</td>
+<td class="org-right">-0.65155</td>
+<td class="org-right">7.676</td>
 </tr>
 
 <tr>
-<td class="org-left">(&rsquo;6.11.6<sub>output</sub>&rsquo;, &rsquo;run0019<sub>0000</sub>&rsquo;, 0.1, 11)</td>
-<td class="org-right">11</td>
+<td class="org-left">(&rsquo;6.11.6<sub>output</sub>&rsquo;, &rsquo;run0012<sub>0000</sub>&rsquo;, 0.1, 14)</td>
+<td class="org-right">14</td>
 <td class="org-right">5</td>
 <td class="org-right">0</td>
-<td class="org-right">0.19428</td>
-<td class="org-right">-4.55316</td>
-<td class="org-right">-0.89951</td>
-<td class="org-right">-0.43688</td>
+<td class="org-right">-3.43021</td>
+<td class="org-right">1.12888</td>
+<td class="org-right">-0.69244</td>
+<td class="org-right">0.72148</td>
 <td class="org-right">0</td>
-<td class="org-right">-4.63631</td>
-<td class="org-right">-5.75944</td>
-<td class="org-right">-0.82545</td>
-<td class="org-right">-0.56443</td>
-<td class="org-right">7.39368</td>
+<td class="org-right">-7.83982</td>
+<td class="org-right">3.42299</td>
+<td class="org-right">-0.86455</td>
+<td class="org-right">0.50259</td>
+<td class="org-right">8.55451</td>
+</tr>
+
+<tr>
+<td class="org-left">(&rsquo;6.11.6<sub>output</sub>&rsquo;, &rsquo;run0012<sub>0000</sub>&rsquo;, 0.1, 12)</td>
+<td class="org-right">12</td>
+<td class="org-right">5</td>
+<td class="org-right">0</td>
+<td class="org-right">3.36138</td>
+<td class="org-right">6.16868</td>
+<td class="org-right">0.01631</td>
+<td class="org-right">-0.99988</td>
+<td class="org-right">0</td>
+<td class="org-right">2.42901</td>
+<td class="org-right">1.27944</td>
+<td class="org-right">-0.36657</td>
+<td class="org-right">-0.93039</td>
+<td class="org-right">2.74537</td>
 </tr>
 </tbody>
 </table>
 
 
-<a id="org233edde"></a>
+<a id="org47a5c4d"></a>
 
 # load in previously parsed dataframes
 
@@ -622,17 +711,17 @@ this is better
     rundirs_allparams_df.fillna(value='empty', inplace=True)
 
 
-<a id="org866b628"></a>
+<a id="org879131e"></a>
 
 # plot results
 
 
-<a id="orgd8583a2"></a>
+<a id="org27d7ce5"></a>
 
-## actin plus end displacement
+## actin plus end displacement vs. time
 
 
-<a id="orgd7fc3f1"></a>
+<a id="org51b8aa0"></a>
 
 ### all parameters
 
@@ -691,15 +780,15 @@ this is better
     plt.tight_layout()
     
     if save_figures == 'yes':
-      plt.savefig(working_dir+'figures/'+pref+'_plusend_disp-vs-time_all.png')
+      plt.savefig(working_dir+'figures/'+pref+'_plusend_disp-vs-time_all.svg')
 
-    /tmp/ipykernel_84634/564072330.py:30: MatplotlibDeprecationWarning: Auto-removal of overlapping axes is deprecated since 3.6 and will be removed two minor releases later; explicitly call ax.remove() as needed.
+    /tmp/ipykernel_21790/720312654.py:30: MatplotlibDeprecationWarning: Auto-removal of overlapping axes is deprecated since 3.6 and will be removed two minor releases later; explicitly call ax.remove() as needed.
       plt.subplot(height,width,plot_no) #height, width
 
-![img](./.ob-jupyter/3aa71f7b203b2a1e5078ee46780c352941296233.png)
+![img](./.ob-jupyter/8758b80dfecfb60b4157e1cd4981fb545eeed5f5.png)
 
 
-<a id="org76fb487"></a>
+<a id="orgf328cde"></a>
 
 ### final myo parameters
 
@@ -762,4 +851,160 @@ this is better
     gliding_nb_steps                             60000.0
     gliding_nb_frames                              600.0
     Name: (6.11.6_output, run0019_0000), dtype: object
+
+
+<a id="org2ceaf51"></a>
+
+## heat map of average velocity
+
+    results = []
+    
+    for output_dir in output_dirs:
+        rundirs = rundirs_allparams[output_dir]
+        for run in rundirs:
+            props = config_unique.loc[(output_dir, run)]
+            stiffness = props['membrane_myosin_stiffness']
+            number = props['membrane_myosin_number']
+    
+            fiber_velocities = []
+    
+            for fiber_id in range(1, 26):
+                try:
+                    xpos = ends_allparams.loc[[output_dir], [run], :, [fiber_id]]['plus_xpos']
+                    ypos = ends_allparams.loc[[output_dir], [run], :, [fiber_id]]['plus_ypos']
+                except KeyError:
+                    continue  # skip missing fibers
+    
+                xpos = xpos.droplevel(['param_sweep', 'run', 'id'])
+                ypos = ypos.droplevel(['param_sweep', 'run', 'id'])
+    
+                time = xpos.index.values
+                if len(time) < 2:
+                    continue  # skip incomplete data
+    
+                x0, y0 = xpos.iloc[0], ypos.iloc[0]
+                disp = np.sqrt((xpos - x0)**2 + (ypos - y0)**2)
+    
+                # Linear regression: displacement vs. time
+                slope, intercept, r_value, p_value, std_err = linregress(time, disp.values)
+                fiber_velocities.append(slope)
+    
+            if fiber_velocities:
+                mean_velocity = np.mean(fiber_velocities)
+                results.append([int(stiffness), number, mean_velocity])
+    
+    # Create DataFrame and pivot
+    df = pd.DataFrame(results, columns=['stiffness', 'number', 'mean_velocity'])
+    
+    # Sort both axes before pivoting
+    df_sorted = df.sort_values(by=['stiffness', 'number'])
+    
+    # Create pivot table with sorted axes
+    heatmap_data = df_sorted.pivot(index='stiffness', columns='number', values='mean_velocity')
+    
+    # Sort index and columns explicitly to ensure consistent ordering
+    heatmap_data = heatmap_data.sort_index(ascending=False, axis=0).sort_index(axis=1)
+    
+    # Extract tick labels from columns/index
+    x_labels = heatmap_data.columns.values  # these are your real myosin counts
+    x_labels_formatted = [f'$10^{{{int(np.log10(x))}}}$' for x in x_labels]
+    
+    # Plot heatmap
+    plt.figure(figsize=(8, 6))
+    ax = sns.heatmap(heatmap_data, annot=True, fmt=".3f", cmap='magma',
+                     cbar_kws={'label': 'Mean barbed end velocity ($\\frac{\\mu m}{s}$)'})
+    
+    # Set formatted tick labels manually
+    ax.set_xticklabels(x_labels_formatted, rotation=0)
+    
+    # Axis labels
+    plt.xlabel('Myosin molecule count')
+    plt.ylabel('Myosin bond stiffness ($\\frac{pN}{\\mu m}$)')
+    plt.tight_layout()
+    
+    if save_figures == 'yes':
+      plt.savefig(working_dir+'figures/publish/plusend_mean_velocity_heatmap.svg')
+
+![img](./.ob-jupyter/596acd1323f7ba5359e17e6477a72c33cd77c609.png)
+
+
+<a id="org5bb2ed6"></a>
+
+## line plot of average velocity
+
+    
+    results = []
+    
+    for output_dir in output_dirs:
+        rundirs = rundirs_allparams[output_dir]
+        for run in rundirs:
+            props = config_unique.loc[(output_dir, run)]
+            stiffness = props['membrane_myosin_stiffness']
+            number = props['membrane_myosin_number']
+    
+            fiber_velocities = []
+    
+            for fiber_id in range(1, 26):
+                try:
+                    xpos = ends_allparams.loc[[output_dir], [run], :, [fiber_id]]['plus_xpos']
+                    ypos = ends_allparams.loc[[output_dir], [run], :, [fiber_id]]['plus_ypos']
+                except KeyError:
+                    continue  # skip missing fibers
+    
+                xpos = xpos.droplevel(['param_sweep', 'run', 'id'])
+                ypos = ypos.droplevel(['param_sweep', 'run', 'id'])
+    
+                time = xpos.index.values
+                if len(time) < 2:
+                    continue  # skip incomplete data
+    
+                x0, y0 = xpos.iloc[0], ypos.iloc[0]
+                disp = np.sqrt((xpos - x0)**2 + (ypos - y0)**2)
+    
+                # Linear regression: displacement vs. time
+                slope, intercept, r_value, p_value, std_err = linregress(time, disp.values)
+                fiber_velocities.append(slope)
+    
+            for v in fiber_velocities:
+                results.append([int(stiffness), int(number), v])
+    
+    # Convert to DataFrame
+    df = pd.DataFrame(results, columns=['stiffness', 'number', 'velocity'])
+    
+    # Plot
+    plt.figure(figsize=(8, 6))
+    
+    for myonumber in np.sort(config_unique['membrane_myosin_number'].unique()):
+        # Filter for myosin count = 10^7
+        dfnum = df[df['number'] == myonumber]
+    
+        # Group by stiffness
+        grouped = dfnum.groupby('stiffness')['velocity']
+        means = grouped.mean()
+        errors = grouped.apply(sem)
+    
+        # Sort
+        stiffness_sorted = sorted(means.index)
+        means_sorted = means.loc[stiffness_sorted]
+        errors_sorted = errors.loc[stiffness_sorted]
+    
+        plt.plot(stiffness_sorted, means_sorted,
+                 label=f'$10^{{{int(np.log10(myonumber))}}}$')
+        plt.fill_between(stiffness_sorted,
+                        means_sorted - errors_sorted,
+                        means_sorted + errors_sorted,
+                        alpha=0.3)
+    
+    plt.xscale('log',base=2)
+    #plt.xticks(stiffness_sorted, [f'$10^{{{int(np.log10(x))}}}$' for x in stiffness_sorted])
+    plt.xlabel('Myosin bond stiffness ($\\frac{pN}{\\mu m}$)')
+    plt.ylabel('Mean barbed end velocity ($\\frac{\\mu m}{s}$)')
+    leg = plt.legend(title='Myosin\nmolecule\ncount')
+    plt.setp(leg.get_title(), multialignment='center')
+    plt.tight_layout()
+    
+    if save_figures == 'yes':
+      plt.savefig(working_dir+'figures/publish/plusend_mean_velocity_line.svg')
+
+![img](./.ob-jupyter/8a5627cc2195b1518ba71a055d459b27cb4846ab.png)
 

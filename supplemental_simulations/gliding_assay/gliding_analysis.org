@@ -1,4 +1,4 @@
-# Created 2025-02-18 Tue 18:46
+# Created 2025-05-13 Tue 10:34
 #+title: 6.11.6 analysis
 #+author: Max Ferrin
 #+property: header-args :exports both :results raw drawer :async t :eval no-export :cache no :tangle no
@@ -11,11 +11,11 @@ where the analysis happens
 
 Due to this difference in directory structure, anyone else using these scripts
 will have to make sure the locations of their data are specified correctly in
-the [[id:e048d701-1479-46eb-8953-498df23e3401][set working directories]] section.
+the [[id:1bb36231-6e9b-49fc-9d6e-c6583bb5b561][set working directories]] section.
 ** convert to jupyter notebook
 *** using pandoc
 this looks nice but it's just a big markdown block
-#+begin_src bash :session 6_11_6
+#+begin_src bash :session idk
 pandoc 6.11.6_analysis.org -o gliding_analysis_pandoc.ipynb
 #+end_src
 
@@ -130,16 +130,18 @@ org_to_ipynb("6.11.6_analysis.org",
              "gliding_analysis_orgparse.ipynb")
 #+end_src
 
+#+results: 
+
 #+begin_src emacs-lisp :tangle no
 (org-babel-tangle)
 #+end_src
 
 #+results: 
-: c692b3bc6302671c75bffbd145877bfc
+: d801dac30f4ce9772b96db7e07ee6f2e
 
 
 
-#+begin_src bash :session 6_11_6
+#+begin_src bash :session idk
 python convert_org_to_ipynb.py
 #+end_src
 
@@ -152,7 +154,7 @@ nil:END:
 #+end_src
 
 #+results: 
-: 25bd31980825939f59716e42a7f65351
+: 779034df5b081f6b2f77f4f5fb6522d5
 ** export to markdown document
 #+begin_src emacs-lisp :tangle no
 (org-md-export-to-markdown)
@@ -162,9 +164,11 @@ nil:END:
 : 6e4588c0990cca7fb6ad29f883d8fb96
 * figure generation index
 
-| figure | panel | link                                                              |
-|--------+-------+-------------------------------------------------------------------|
-| S2     | D     | [[id:7c65b913-896c-4575-b326-f24ab1e4ab03][final myo parameters]] |
+| figure | panel | link                                                                       |
+|--------+-------+----------------------------------------------------------------------------|
+| S2     | D     | [[id:7be2a9ec-deba-42ae-b0b5-1a8a77eadc25][final myo parameters]]          |
+| S2     | D     | [[id:d14f2d79-de0e-42eb-8eaa-3a28bd3b8583][heat map of average velocity]]  |
+| S2     | D     | [[id:6ac327e3-fdaa-4aa4-8477-b359a8f3c311][line plot of average velocity]] |
 * configuration
 ** set global variables
 #+begin_src python
@@ -196,6 +200,7 @@ import matplotlib
 from matplotlib.colors import LogNorm
 from matplotlib.colors import SymLogNorm
 from matplotlib.cm import ScalarMappable
+from matplotlib.ticker import FuncFormatter
 from scipy.stats import binned_statistic_2d
 from scipy import stats
 from scipy.signal import savgol_filter
@@ -203,6 +208,8 @@ from scipy.signal import find_peaks
 import textwrap
 from decimal import Decimal
 from scipy.stats import binned_statistic_2d
+from scipy.stats import linregress
+from scipy.stats import sem
 from matplotlib.font_manager import FontProperties
 import matplotlib.pyplot as plt  # plotting
 import matplotlib.colors as mcolors
@@ -235,11 +242,7 @@ pref = date
 #+end_src
 
 #+results: 
-:RESULTS:
-: /home/maxferrin/miniconda3/lib/python3.10/site-packages/pandas/core/arrays/masked.py:60: UserWarning: Pandas requires version '1.3.6' or newer of 'bottleneck' (version '1.3.5' currently installed).
-:   from pandas.core import (
-: <Figure size 640x480 with 0 Axes>
-:END:
+: <Figure size 600x500 with 0 Axes>
 ** set working directories
 #+begin_src python
 #machine = 'peeks'
@@ -264,11 +267,12 @@ if machine == 'sobarky':
     drive_dir = '/Users/dblab/google_drive/'
 
 
-working_dir = os.path.join(drive_dir, 'grad_school/db_lab/code/analysis/6.11.6_temp/')
+working_dir = os.path.join(drive_dir, 'grad_school/db_lab/code/analysis/20230630_6.11.6_glidingrecapitulation/')
+#working_dir = '/home/maxferrin/mount/trinity/home/google_drive/grad_school/db_lab/code/analysis/20230630_6.11.6_glidingrecapitulation/'
 cytosim_dir = os.path.join(drive_dir, 'grad_school/db_lab/code/cytosim_dblab/', machine)
 
 if machine == 'peeks':
-    working_dir = '/run/media/ferrin/Volume/max/analysis/6.11.6_temp/'
+    working_dir = '/run/media/ferrin/Volume/max/analysis/20230630_6.11.6_glidingrecapitulation/'
     cytosim_dir = '/home/ferrin/cytosim/'
 
 dataframes_dir = os.path.join(working_dir,'dataframes/')
@@ -294,7 +298,7 @@ reload(sys.modules['cytosim_analysis'])
 #+end_src
 
 #+results: 
-: <module 'cytosim_analysis' from '/home/maxferrin/SynologyDrive/google_drive/grad_school/db_lab/code/analysis/6.11.6_temp/../cytosim_analysis/__init__.py'>
+: <module 'cytosim_analysis' from '/home/maxferrin/SynologyDrive/google_drive/grad_school/db_lab/code/analysis/20230508_6.6.5_myominimal/../cytosim_analysis/__init__.py'>
 * find directories that have outputs or config files
 #+begin_src python
 output_dirs, config_dirs = caf.find_directories()
@@ -318,12 +322,11 @@ this crashes
 
 this is better
 #+begin_src python
- properties_allruns_allparams, configs_allruns_allparams, \
- fiber_ends_allruns_allparams, rundirs_allparams, \
- total_runs = caf.report_fiber_ends(
+properties_allruns_allparams, configs_allruns_allparams, \
+fiber_ends_allruns_allparams, rundirs_allparams, \
+total_runs = caf.report_fiber_ends(
      working_dir, output_dirs, config_dirs,
      cytosim_dir, report, replace_movies)
-
 rundirs_allparams_df = pd.DataFrame.from_dict(rundirs_allparams, orient = 'index')
 if save_dataframes == 'yes':
     rundirs_allparams_df.to_pickle(dataframes_dir+'rundirs_allparams.pkl')
@@ -352,7 +355,13 @@ properties_allparams, config_allparams = caf.props_configs(
 #+end_src
 
 #+results: 
-| ('6.11.6_output', 'run0019_0000') |
+|                                   | glide_random_seed | membrane_myosin_stiffness |
+|-----------------------------------+-------------------+---------------------------|
+| ('6.11.6_output', 'run0012_0000') |       1.29091e+09 |                        40 |
+| ('6.11.6_output', 'run0007_0000') |        1.1413e+09 |                        80 |
+| ('6.11.6_output', 'run0016_0000') |       9.18455e+08 |                       640 |
+| ('6.11.6_output', 'run0004_0000') |        4.1467e+09 |                       640 |
+| ('6.11.6_output', 'run0005_0000') |       2.63386e+07 |                      1280 |
 
 
 #+begin_src python
@@ -366,7 +375,13 @@ properties_allparams, config_allparams = caf.props_configs(
 #+end_src
 
 #+results[1b422a68534578bf15fed4ee46a5f69db45e3025]: 
-| ('6.11.6_output', 'run0019_0000') |
+|                                   | membrane_myosin_stiffness | membrane_myosin_number |
+|-----------------------------------+---------------------------+------------------------|
+| ('6.11.6_output', 'run0012_0000') |                        40 |                  1e+06 |
+| ('6.11.6_output', 'run0007_0000') |                        80 |                 100000 |
+| ('6.11.6_output', 'run0016_0000') |                       640 |                  1e+06 |
+| ('6.11.6_output', 'run0004_0000') |                       640 |                  10000 |
+| ('6.11.6_output', 'run0005_0000') |                      1280 |                  10000 |
 * parse results into dataframe
 
 ** fiber ends
@@ -386,11 +401,11 @@ ends_allparams.head()
 
 |                                            | fiber_id | length | minus_state | minus_xpos | minus_ypos | minus_xdir | minus_ydir | plus_state | plus_xpos | plus_ypos | plus_xdir | plus_ydir | plus_rpos |
 |--------------------------------------------+----------+--------+-------------+------------+------------+------------+------------+------------+-----------+-----------+-----------+-----------+-----------|
-| ('6.11.6_output', 'run0019_0000', 0.1, 17) |       17 |      5 |           0 |    2.97818 |    5.08422 |    0.98319 |    0.18268 |          0 |   7.74348 |   6.55944 |   0.96617 |   0.25792 |   10.1483 |
-| ('6.11.6_output', 'run0019_0000', 0.1, 14) |       14 |      5 |           0 |    5.25302 |    5.61874 |    0.45285 |    0.89159 |          0 |   8.63113 |   9.27963 |   0.73223 |   0.68111 |   12.6731 |
-| ('6.11.6_output', 'run0019_0000', 0.1, 20) |       20 |      5 |           0 |    2.36824 |    9.47717 |     0.9985 |   -0.05465 |          0 |   7.35264 |   9.20952 |   0.97208 |  -0.23451 |   11.7846 |
-| ('6.11.6_output', 'run0019_0000', 0.1, 6)  |        6 |      1 |           0 |   -3.85175 |   -9.35898 |     0.6247 |   -0.78087 |          0 |  -3.07164 |  -9.97737 |    0.7782 |  -0.62799 |   10.4395 |
-| ('6.11.6_output', 'run0019_0000', 0.1, 11) |       11 |      5 |           0 |    0.19428 |   -4.55316 |   -0.89951 |   -0.43688 |          0 |  -4.63631 |  -5.75944 |  -0.82545 |  -0.56443 |   7.39368 |
+| ('6.11.6_output', 'run0012_0000', 0.1, 9)  |        9 |      1 |           0 |    4.37804 |    -5.9312 |     0.5723 |   -0.82006 |          0 |   4.75198 |  -6.85142 |   0.26231 |  -0.96498 |   8.33806 |
+| ('6.11.6_output', 'run0012_0000', 0.1, 5)  |        5 |      1 |           0 |   -2.78723 |   -8.55029 |    0.70925 |   -0.70496 |          0 |  -2.39566 |  -9.44762 |   0.25752 |  -0.96626 |   9.74663 |
+| ('6.11.6_output', 'run0012_0000', 0.1, 6)  |        6 |      1 |           0 |    1.71594 |    7.66453 |    0.94765 |   -0.31929 |          0 |   2.60265 |    7.2213 |   0.75858 |  -0.65155 |     7.676 |
+| ('6.11.6_output', 'run0012_0000', 0.1, 14) |       14 |      5 |           0 |   -3.43021 |    1.12888 |   -0.69244 |    0.72148 |          0 |  -7.83982 |   3.42299 |  -0.86455 |   0.50259 |   8.55451 |
+| ('6.11.6_output', 'run0012_0000', 0.1, 12) |       12 |      5 |           0 |    3.36138 |    6.16868 |    0.01631 |   -0.99988 |          0 |   2.42901 |   1.27944 |  -0.36657 |  -0.93039 |   2.74537 |
 :END:
 * load in previously parsed dataframes
 #+begin_src python
@@ -398,9 +413,11 @@ ends_allparams = pd.read_pickle(dataframes_dir+'ends_allparams.pkl')
 rundirs_allparams_df = pd.read_pickle(dataframes_dir+'rundirs_allparams.pkl')
 rundirs_allparams_df.fillna(value='empty', inplace=True)
 #+end_src
+
+#+results: 
 * plot results
 
-** actin plus end displacement
+** actin plus end displacement vs. time
 *** all parameters
 
 #+begin_src python
@@ -459,15 +476,15 @@ rundirs_allparams_df.fillna(value='empty', inplace=True)
  plt.tight_layout()
 
  if save_figures == 'yes':
-   plt.savefig(working_dir+'figures/'+pref+'_plusend_disp-vs-time_all.png')
+   plt.savefig(working_dir+'figures/'+pref+'_plusend_disp-vs-time_all.svg')
 #+end_src
 
 #+results: 
 :RESULTS:
-: /tmp/ipykernel_84634/564072330.py:30: MatplotlibDeprecationWarning: Auto-removal of overlapping axes is deprecated since 3.6 and will be removed two minor releases later; explicitly call ax.remove() as needed.
+: /tmp/ipykernel_21790/720312654.py:30: MatplotlibDeprecationWarning: Auto-removal of overlapping axes is deprecated since 3.6 and will be removed two minor releases later; explicitly call ax.remove() as needed.
 :   plt.subplot(height,width,plot_no) #height, width
 
-[[file:./.ob-jupyter/3aa71f7b203b2a1e5078ee46780c352941296233.png]]
+[[file:./.ob-jupyter/8758b80dfecfb60b4157e1cd4981fb545eeed5f5.png]]
 :END:
 *** final myo parameters
 #+begin_src python
@@ -537,3 +554,155 @@ gliding_nb_steps                             60000.0
 gliding_nb_frames                              600.0
 Name: (6.11.6_output, run0019_0000), dtype: object
 #+end_example
+** heat map of average velocity
+#+begin_src python
+results = []
+
+for output_dir in output_dirs:
+    rundirs = rundirs_allparams[output_dir]
+    for run in rundirs:
+        props = config_unique.loc[(output_dir, run)]
+        stiffness = props['membrane_myosin_stiffness']
+        number = props['membrane_myosin_number']
+
+        fiber_velocities = []
+
+        for fiber_id in range(1, 26):
+            try:
+                xpos = ends_allparams.loc[[output_dir], [run], :, [fiber_id]]['plus_xpos']
+                ypos = ends_allparams.loc[[output_dir], [run], :, [fiber_id]]['plus_ypos']
+            except KeyError:
+                continue  # skip missing fibers
+
+            xpos = xpos.droplevel(['param_sweep', 'run', 'id'])
+            ypos = ypos.droplevel(['param_sweep', 'run', 'id'])
+
+            time = xpos.index.values
+            if len(time) < 2:
+                continue  # skip incomplete data
+
+            x0, y0 = xpos.iloc[0], ypos.iloc[0]
+            disp = np.sqrt((xpos - x0)**2 + (ypos - y0)**2)
+
+            # Linear regression: displacement vs. time
+            slope, intercept, r_value, p_value, std_err = linregress(time, disp.values)
+            fiber_velocities.append(slope)
+
+        if fiber_velocities:
+            mean_velocity = np.mean(fiber_velocities)
+            results.append([int(stiffness), number, mean_velocity])
+
+# Create DataFrame and pivot
+df = pd.DataFrame(results, columns=['stiffness', 'number', 'mean_velocity'])
+
+# Sort both axes before pivoting
+df_sorted = df.sort_values(by=['stiffness', 'number'])
+
+# Create pivot table with sorted axes
+heatmap_data = df_sorted.pivot(index='stiffness', columns='number', values='mean_velocity')
+
+# Sort index and columns explicitly to ensure consistent ordering
+heatmap_data = heatmap_data.sort_index(ascending=False, axis=0).sort_index(axis=1)
+
+# Extract tick labels from columns/index
+x_labels = heatmap_data.columns.values  # these are your real myosin counts
+x_labels_formatted = [f'$10^{{{int(np.log10(x))}}}$' for x in x_labels]
+
+# Plot heatmap
+plt.figure(figsize=(8, 6))
+ax = sns.heatmap(heatmap_data, annot=True, fmt=".3f", cmap='magma',
+                 cbar_kws={'label': 'Mean barbed end velocity ($\\frac{\\mu m}{s}$)'})
+
+# Set formatted tick labels manually
+ax.set_xticklabels(x_labels_formatted, rotation=0)
+
+# Axis labels
+plt.xlabel('Myosin molecule count')
+plt.ylabel('Myosin bond stiffness ($\\frac{pN}{\\mu m}$)')
+plt.tight_layout()
+
+if save_figures == 'yes':
+  plt.savefig(working_dir+'figures/publish/plusend_mean_velocity_heatmap.svg')
+#+end_src
+
+#+results: 
+[[file:./.ob-jupyter/596acd1323f7ba5359e17e6477a72c33cd77c609.png]]
+** line plot of average velocity
+#+begin_src python
+
+results = []
+
+for output_dir in output_dirs:
+    rundirs = rundirs_allparams[output_dir]
+    for run in rundirs:
+        props = config_unique.loc[(output_dir, run)]
+        stiffness = props['membrane_myosin_stiffness']
+        number = props['membrane_myosin_number']
+
+        fiber_velocities = []
+
+        for fiber_id in range(1, 26):
+            try:
+                xpos = ends_allparams.loc[[output_dir], [run], :, [fiber_id]]['plus_xpos']
+                ypos = ends_allparams.loc[[output_dir], [run], :, [fiber_id]]['plus_ypos']
+            except KeyError:
+                continue  # skip missing fibers
+
+            xpos = xpos.droplevel(['param_sweep', 'run', 'id'])
+            ypos = ypos.droplevel(['param_sweep', 'run', 'id'])
+
+            time = xpos.index.values
+            if len(time) < 2:
+                continue  # skip incomplete data
+
+            x0, y0 = xpos.iloc[0], ypos.iloc[0]
+            disp = np.sqrt((xpos - x0)**2 + (ypos - y0)**2)
+
+            # Linear regression: displacement vs. time
+            slope, intercept, r_value, p_value, std_err = linregress(time, disp.values)
+            fiber_velocities.append(slope)
+
+        for v in fiber_velocities:
+            results.append([int(stiffness), int(number), v])
+
+# Convert to DataFrame
+df = pd.DataFrame(results, columns=['stiffness', 'number', 'velocity'])
+
+# Plot
+plt.figure(figsize=(8, 6))
+
+for myonumber in np.sort(config_unique['membrane_myosin_number'].unique()):
+    # Filter for myosin count = 10^7
+    dfnum = df[df['number'] == myonumber]
+
+    # Group by stiffness
+    grouped = dfnum.groupby('stiffness')['velocity']
+    means = grouped.mean()
+    errors = grouped.apply(sem)
+
+    # Sort
+    stiffness_sorted = sorted(means.index)
+    means_sorted = means.loc[stiffness_sorted]
+    errors_sorted = errors.loc[stiffness_sorted]
+
+    plt.plot(stiffness_sorted, means_sorted,
+             label=f'$10^{{{int(np.log10(myonumber))}}}$')
+    plt.fill_between(stiffness_sorted,
+                    means_sorted - errors_sorted,
+                    means_sorted + errors_sorted,
+                    alpha=0.3)
+
+plt.xscale('log',base=2)
+#plt.xticks(stiffness_sorted, [f'$10^{{{int(np.log10(x))}}}$' for x in stiffness_sorted])
+plt.xlabel('Myosin bond stiffness ($\\frac{pN}{\\mu m}$)')
+plt.ylabel('Mean barbed end velocity ($\\frac{\\mu m}{s}$)')
+leg = plt.legend(title='Myosin\nmolecule\ncount')
+plt.setp(leg.get_title(), multialignment='center')
+plt.tight_layout()
+
+if save_figures == 'yes':
+  plt.savefig(working_dir+'figures/publish/plusend_mean_velocity_line.svg')
+#+end_src
+
+#+results: 
+[[file:./.ob-jupyter/8a5627cc2195b1518ba71a055d459b27cb4846ab.png]]
