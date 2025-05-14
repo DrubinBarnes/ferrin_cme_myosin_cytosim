@@ -1,36 +1,36 @@
 
 # Table of Contents
 
-1.  [export this to other file formats](#orgcf023d6)
-    1.  [convert to jupyter notebook](#orgcebaf9c)
-        1.  [using pandoc](#orgd61af31)
-        2.  [using orgparse](#orgf75a27e)
-    2.  [export to org document](#org64bfb43)
-    3.  [export to markdown document](#org0b67c03)
-2.  [figure generation index](#orgeea2f55)
-3.  [configuration](#org5244a0d)
-    1.  [set global variables](#orgf512f53)
-    2.  [load and configure libraries](#org07a5eb6)
-    3.  [set working directories](#org1c432eb)
-    4.  [load custom functions](#org508cff2)
-4.  [find directories that have outputs or config files](#org28d351d)
-5.  [report simulations](#org88ba5ca)
-6.  [read simulation properties](#org5436ea7)
-    1.  [put all properties and configs into dataframes](#org81842cb)
-    2.  [filter for properties that vary among simulations](#orgdb2857e)
-7.  [parse results into dataframe](#orgcd12a7f)
-    1.  [fiber ends](#org83622cb)
-8.  [load in previously parsed dataframes](#org47a5c4d)
-9.  [plot results](#org879131e)
-    1.  [actin plus end displacement vs. time](#org27d7ce5)
-        1.  [all parameters](#org51b8aa0)
-        2.  [final myo parameters](#orgf328cde)
-    2.  [heat map of average velocity](#org2ceaf51)
-    3.  [line plot of average velocity](#org5bb2ed6)
+1.  [export this to other file formats](#org3f0126d)
+    1.  [convert to jupyter notebook](#org7635642)
+        1.  [using pandoc](#orgaf02dd1)
+        2.  [using orgparse](#org5155d6d)
+    2.  [export to org document](#org0de6b0d)
+    3.  [export to markdown document](#org5396fa9)
+2.  [figure generation index](#org6c16b38)
+3.  [configuration](#org8e646f9)
+    1.  [set global variables](#orgf8049c1)
+    2.  [load and configure libraries](#org493e05b)
+    3.  [set working directories](#orge91e2e4)
+    4.  [load custom functions](#orgca6a478)
+4.  [find directories that have outputs or config files](#orgfc2fffd)
+5.  [report simulations](#org3a17184)
+6.  [read simulation properties](#orgb47639e)
+    1.  [put all properties and configs into dataframes](#org1ef892a)
+    2.  [filter for properties that vary among simulations](#org339ba85)
+7.  [parse results into dataframe](#org3992da3)
+    1.  [fiber ends](#orgb00e806)
+8.  [load in previously parsed dataframes](#org3232633)
+9.  [plot results](#orgd8533dd)
+    1.  [actin plus end displacement vs. time](#orgaa11a82)
+        1.  [all parameters](#org4aa6685)
+        2.  [final myo parameters](#orgacf6ea6)
+    2.  [heat map of average velocity](#org0aae294)
+    3.  [line plot of average velocity](#org8001e05)
 
 
 
-<a id="orgcf023d6"></a>
+<a id="org3f0126d"></a>
 
 # export this to other file formats
 
@@ -40,15 +40,15 @@ where the analysis happens
 
 Due to this difference in directory structure, anyone else using these scripts
 will have to make sure the locations of their data are specified correctly in
-the [set working directories](#org1c432eb) section.
+the [set working directories](#orge91e2e4) section.
 
 
-<a id="orgcebaf9c"></a>
+<a id="org7635642"></a>
 
 ## convert to jupyter notebook
 
 
-<a id="orgd61af31"></a>
+<a id="orgaf02dd1"></a>
 
 ### using pandoc
 
@@ -57,7 +57,7 @@ this looks nice but it&rsquo;s just a big markdown block
     pandoc 6.11.6_analysis.org -o gliding_analysis_pandoc.ipynb
 
 
-<a id="orgf75a27e"></a>
+<a id="org5155d6d"></a>
 
 ### using orgparse
 
@@ -167,12 +167,12 @@ doesn&rsquo;t work
 
     (org-babel-tangle)
 
-    d801dac30f4ce9772b96db7e07ee6f2e
+    589f5bc653f83f37475df4339280d3b0
 
     python convert_org_to_ipynb.py
 
 
-<a id="org64bfb43"></a>
+<a id="org0de6b0d"></a>
 
 ## export to org document
 
@@ -181,7 +181,7 @@ doesn&rsquo;t work
     779034df5b081f6b2f77f4f5fb6522d5
 
 
-<a id="org0b67c03"></a>
+<a id="org5396fa9"></a>
 
 ## export to markdown document
 
@@ -190,7 +190,7 @@ doesn&rsquo;t work
     6e4588c0990cca7fb6ad29f883d8fb96
 
 
-<a id="orgeea2f55"></a>
+<a id="org6c16b38"></a>
 
 # figure generation index
 
@@ -215,30 +215,30 @@ doesn&rsquo;t work
 <tr>
 <td class="org-left">S2</td>
 <td class="org-left">D</td>
-<td class="org-left"><a href="#orgf328cde">final myo parameters</a></td>
+<td class="org-left"><a href="#orgacf6ea6">final myo parameters</a></td>
 </tr>
 
 <tr>
 <td class="org-left">S2</td>
 <td class="org-left">D</td>
-<td class="org-left"><a href="#org2ceaf51">heat map of average velocity</a></td>
+<td class="org-left"><a href="#org0aae294">heat map of average velocity</a></td>
 </tr>
 
 <tr>
 <td class="org-left">S2</td>
 <td class="org-left">D</td>
-<td class="org-left"><a href="#org5bb2ed6">line plot of average velocity</a></td>
+<td class="org-left"><a href="#org8001e05">line plot of average velocity</a></td>
 </tr>
 </tbody>
 </table>
 
 
-<a id="org5244a0d"></a>
+<a id="org8e646f9"></a>
 
 # configuration
 
 
-<a id="orgf512f53"></a>
+<a id="orgf8049c1"></a>
 
 ## set global variables
 
@@ -249,7 +249,7 @@ doesn&rsquo;t work
     save_dataframes = 'yes'
 
 
-<a id="org07a5eb6"></a>
+<a id="org493e05b"></a>
 
 ## load and configure libraries
 
@@ -311,10 +311,12 @@ doesn&rsquo;t work
     date = now.strftime('%Y%m%d')
     pref = date
 
-    <Figure size 600x500 with 0 Axes>
+    /home/maxferrin/miniconda3/lib/python3.10/site-packages/pandas/core/arrays/masked.py:60: UserWarning: Pandas requires version '1.3.6' or newer of 'bottleneck' (version '1.3.5' currently installed).
+      from pandas.core import (
+    <Figure size 640x480 with 0 Axes>
 
 
-<a id="org1c432eb"></a>
+<a id="orge91e2e4"></a>
 
 ## set working directories
 
@@ -358,7 +360,7 @@ doesn&rsquo;t work
         os.mkdir('dataframes')
 
 
-<a id="org508cff2"></a>
+<a id="orgca6a478"></a>
 
 ## load custom functions
 
@@ -370,10 +372,10 @@ doesn&rsquo;t work
     from importlib import reload
     reload(sys.modules['cytosim_analysis'])
 
-    <module 'cytosim_analysis' from '/home/maxferrin/SynologyDrive/google_drive/grad_school/db_lab/code/analysis/20230508_6.6.5_myominimal/../cytosim_analysis/__init__.py'>
+    <module 'cytosim_analysis' from '/home/maxferrin/SynologyDrive/google_drive/grad_school/db_lab/code/analysis/20230630_6.11.6_glidingrecapitulation/../cytosim_analysis/__init__.py'>
 
 
-<a id="org28d351d"></a>
+<a id="orgfc2fffd"></a>
 
 # find directories that have outputs or config files
 
@@ -383,7 +385,7 @@ doesn&rsquo;t work
     ['6.11.6_output'] ['6.11.6']
 
 
-<a id="org88ba5ca"></a>
+<a id="org3a17184"></a>
 
 # report simulations
 
@@ -411,21 +413,24 @@ this is better
     finished reporting 6.11.6_output
 
 
-<a id="org5436ea7"></a>
+<a id="orgb47639e"></a>
 
 # read simulation properties
 
 
-<a id="org81842cb"></a>
+<a id="org1ef892a"></a>
 
 ## put all properties and configs into dataframes
 
     properties_allparams, config_allparams = caf.props_configs(
         output_dirs, rundirs_allparams_df,
         properties_allruns_allparams, configs_allruns_allparams)
+    if save_dataframes == 'yes':
+        properties_allparams.to_pickle(dataframes_dir+'properties_allparams.pkl')
+        config_allparams.to_pickle(dataframes_dir+'config_allparams.pkl')
 
 
-<a id="orgdb2857e"></a>
+<a id="org339ba85"></a>
 
 ## filter for properties that vary among simulations
 
@@ -434,6 +439,8 @@ this is better
     cols_to_drop = nunique[nunique == 1].index
     properties_unique = properties_allparams.drop(cols_to_drop, axis=1)
     #properties_unique = properties_unique.drop(labels='internalize_random_seed',axis=1)
+    if save_dataframes == 'yes':
+        properties_unique.to_pickle(dataframes_dir+'properties_unique.pkl')
     properties_unique.head()
 
 <table>
@@ -492,6 +499,8 @@ this is better
     config_unique = config_allparams.drop(cols_to_drop, axis=1)
     #config_unique = config_unique.drop(['membrane_myosin_position'], axis=1)
     config_unique = config_unique.astype('float')
+    if save_dataframes == 'yes':
+        config_unique.to_pickle(dataframes_dir+'config_unique.pkl')
     config_unique.head()
 
 <table>
@@ -545,12 +554,12 @@ this is better
 </table>
 
 
-<a id="orgcd12a7f"></a>
+<a id="org3992da3"></a>
 
 # parse results into dataframe
 
 
-<a id="org83622cb"></a>
+<a id="orgb00e806"></a>
 
 ## fiber ends
 
@@ -702,26 +711,30 @@ this is better
 </table>
 
 
-<a id="org47a5c4d"></a>
+<a id="org3232633"></a>
 
 # load in previously parsed dataframes
 
     ends_allparams = pd.read_pickle(dataframes_dir+'ends_allparams.pkl')
     rundirs_allparams_df = pd.read_pickle(dataframes_dir+'rundirs_allparams.pkl')
     rundirs_allparams_df.fillna(value='empty', inplace=True)
+    properties_allparams = pd.read_pickle(dataframes_dir+'properties_allparams.pkl')
+    config_allparams = pd.read_pickle(dataframes_dir+'config_allparams.pkl')
+    properties_unique = pd.read_pickle(dataframes_dir+'properties_unique.pkl')
+    config_unique = pd.read_pickle(dataframes_dir+'config_unique.pkl')
 
 
-<a id="org879131e"></a>
+<a id="orgd8533dd"></a>
 
 # plot results
 
 
-<a id="org27d7ce5"></a>
+<a id="orgaa11a82"></a>
 
 ## actin plus end displacement vs. time
 
 
-<a id="org51b8aa0"></a>
+<a id="org4aa6685"></a>
 
 ### all parameters
 
@@ -788,7 +801,7 @@ this is better
 ![img](./.ob-jupyter/8758b80dfecfb60b4157e1cd4981fb545eeed5f5.png)
 
 
-<a id="orgf328cde"></a>
+<a id="orgacf6ea6"></a>
 
 ### final myo parameters
 
@@ -853,10 +866,11 @@ this is better
     Name: (6.11.6_output, run0019_0000), dtype: object
 
 
-<a id="org2ceaf51"></a>
+<a id="org0aae294"></a>
 
 ## heat map of average velocity
 
+    
     results = []
     
     for output_dir in output_dirs:
@@ -889,46 +903,46 @@ this is better
                 slope, intercept, r_value, p_value, std_err = linregress(time, disp.values)
                 fiber_velocities.append(slope)
     
-            if fiber_velocities:
-                mean_velocity = np.mean(fiber_velocities)
-                results.append([int(stiffness), number, mean_velocity])
+            for v in fiber_velocities:
+                results.append([int(stiffness), int(number), v])
+    df = pd.DataFrame(results, columns=['stiffness', 'number', 'velocity'])
     
-    # Create DataFrame and pivot
-    df = pd.DataFrame(results, columns=['stiffness', 'number', 'mean_velocity'])
+    # Group by parameter combinations
+    grouped = df.groupby(['number','stiffness'])['velocity']
+    means = grouped.mean().unstack()
+    sems = grouped.sem().unstack()
+    # Create a string array with "mean\n(±sem)" formatting
+    annot_array = means.copy().astype(str)
     
-    # Sort both axes before pivoting
-    df_sorted = df.sort_values(by=['stiffness', 'number'])
-    
-    # Create pivot table with sorted axes
-    heatmap_data = df_sorted.pivot(index='stiffness', columns='number', values='mean_velocity')
-    
-    # Sort index and columns explicitly to ensure consistent ordering
-    heatmap_data = heatmap_data.sort_index(ascending=False, axis=0).sort_index(axis=1)
-    
-    # Extract tick labels from columns/index
-    x_labels = heatmap_data.columns.values  # these are your real myosin counts
-    x_labels_formatted = [f'$10^{{{int(np.log10(x))}}}$' for x in x_labels]
-    
-    # Plot heatmap
-    plt.figure(figsize=(8, 6))
-    ax = sns.heatmap(heatmap_data, annot=True, fmt=".3f", cmap='magma',
+    for i in means.index:
+        for j in means.columns:
+            mean_val = means.loc[i, j]
+            sem_val = sems.loc[i, j]
+            if not pd.isna(mean_val) and not pd.isna(sem_val):
+                annot_array.loc[i, j] = f"{mean_val:.3f}\n(±{sem_val:.3f})"
+            else:
+                annot_array.loc[i, j] = ""
+    plt.figure(figsize=(12, 6))
+    ax = sns.heatmap(means, annot=annot_array, fmt='', cmap='magma',
                      cbar_kws={'label': 'Mean barbed end velocity ($\\frac{\\mu m}{s}$)'})
     
-    # Set formatted tick labels manually
-    ax.set_xticklabels(x_labels_formatted, rotation=0)
     
-    # Axis labels
-    plt.xlabel('Myosin molecule count')
-    plt.ylabel('Myosin bond stiffness ($\\frac{pN}{\\mu m}$)')
+    # Set log-style tick labels
+    ax.set_yticklabels([f'$10^{{{int(np.log10(y))}}}$' for y in means.index], rotation=0)
+    
+    ax.invert_yaxis()
+    
+    plt.ylabel('Myosin molecule count')
+    plt.xlabel('Myosin bond stiffness ($\\frac{pN}{\\mu m}$)')
     plt.tight_layout()
     
     if save_figures == 'yes':
       plt.savefig(working_dir+'figures/publish/plusend_mean_velocity_heatmap.svg')
 
-![img](./.ob-jupyter/596acd1323f7ba5359e17e6477a72c33cd77c609.png)
+![img](./.ob-jupyter/1bdd22f017b344fdd705ac67d790fe01d2d7c0ee.png)
 
 
-<a id="org5bb2ed6"></a>
+<a id="org8001e05"></a>
 
 ## line plot of average velocity
 

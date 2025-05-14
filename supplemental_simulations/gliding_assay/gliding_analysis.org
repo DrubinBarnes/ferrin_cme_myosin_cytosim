@@ -1,4 +1,4 @@
-# Created 2025-05-13 Tue 10:34
+# Created 2025-05-14 Wed 11:52
 #+title: 6.11.6 analysis
 #+author: Max Ferrin
 #+property: header-args :exports both :results raw drawer :async t :eval no-export :cache no :tangle no
@@ -137,7 +137,7 @@ org_to_ipynb("6.11.6_analysis.org",
 #+end_src
 
 #+results: 
-: d801dac30f4ce9772b96db7e07ee6f2e
+: 589f5bc653f83f37475df4339280d3b0
 
 
 
@@ -242,7 +242,11 @@ pref = date
 #+end_src
 
 #+results: 
-: <Figure size 600x500 with 0 Axes>
+:RESULTS:
+: /home/maxferrin/miniconda3/lib/python3.10/site-packages/pandas/core/arrays/masked.py:60: UserWarning: Pandas requires version '1.3.6' or newer of 'bottleneck' (version '1.3.5' currently installed).
+:   from pandas.core import (
+: <Figure size 640x480 with 0 Axes>
+:END:
 ** set working directories
 #+begin_src python
 #machine = 'peeks'
@@ -298,7 +302,7 @@ reload(sys.modules['cytosim_analysis'])
 #+end_src
 
 #+results: 
-: <module 'cytosim_analysis' from '/home/maxferrin/SynologyDrive/google_drive/grad_school/db_lab/code/analysis/20230508_6.6.5_myominimal/../cytosim_analysis/__init__.py'>
+: <module 'cytosim_analysis' from '/home/maxferrin/SynologyDrive/google_drive/grad_school/db_lab/code/analysis/20230630_6.11.6_glidingrecapitulation/../cytosim_analysis/__init__.py'>
 * find directories that have outputs or config files
 #+begin_src python
 output_dirs, config_dirs = caf.find_directories()
@@ -341,17 +345,22 @@ if save_dataframes == 'yes':
 properties_allparams, config_allparams = caf.props_configs(
     output_dirs, rundirs_allparams_df,
     properties_allruns_allparams, configs_allruns_allparams)
+if save_dataframes == 'yes':
+    properties_allparams.to_pickle(dataframes_dir+'properties_allparams.pkl')
+    config_allparams.to_pickle(dataframes_dir+'config_allparams.pkl')
 #+end_src
 
 #+results: 
 ** filter for properties that vary among simulations
 #+begin_src python
-   cols = list(properties_allparams)
-   nunique = properties_allparams.apply(pd.Series.nunique)
-   cols_to_drop = nunique[nunique == 1].index
-   properties_unique = properties_allparams.drop(cols_to_drop, axis=1)
-   #properties_unique = properties_unique.drop(labels='internalize_random_seed',axis=1)
-   properties_unique.head()
+cols = list(properties_allparams)
+nunique = properties_allparams.apply(pd.Series.nunique)
+cols_to_drop = nunique[nunique == 1].index
+properties_unique = properties_allparams.drop(cols_to_drop, axis=1)
+#properties_unique = properties_unique.drop(labels='internalize_random_seed',axis=1)
+if save_dataframes == 'yes':
+    properties_unique.to_pickle(dataframes_dir+'properties_unique.pkl')
+properties_unique.head()
 #+end_src
 
 #+results: 
@@ -365,13 +374,15 @@ properties_allparams, config_allparams = caf.props_configs(
 
 
 #+begin_src python
- cols = list(config_allparams)
- nunique = config_allparams.apply(pd.Series.nunique)
- cols_to_drop = nunique[nunique == 1].index
- config_unique = config_allparams.drop(cols_to_drop, axis=1)
- #config_unique = config_unique.drop(['membrane_myosin_position'], axis=1)
- config_unique = config_unique.astype('float')
- config_unique.head()
+cols = list(config_allparams)
+nunique = config_allparams.apply(pd.Series.nunique)
+cols_to_drop = nunique[nunique == 1].index
+config_unique = config_allparams.drop(cols_to_drop, axis=1)
+#config_unique = config_unique.drop(['membrane_myosin_position'], axis=1)
+config_unique = config_unique.astype('float')
+if save_dataframes == 'yes':
+    config_unique.to_pickle(dataframes_dir+'config_unique.pkl')
+config_unique.head()
 #+end_src
 
 #+results[1b422a68534578bf15fed4ee46a5f69db45e3025]: 
@@ -412,6 +423,10 @@ ends_allparams.head()
 ends_allparams = pd.read_pickle(dataframes_dir+'ends_allparams.pkl')
 rundirs_allparams_df = pd.read_pickle(dataframes_dir+'rundirs_allparams.pkl')
 rundirs_allparams_df.fillna(value='empty', inplace=True)
+properties_allparams = pd.read_pickle(dataframes_dir+'properties_allparams.pkl')
+config_allparams = pd.read_pickle(dataframes_dir+'config_allparams.pkl')
+properties_unique = pd.read_pickle(dataframes_dir+'properties_unique.pkl')
+config_unique = pd.read_pickle(dataframes_dir+'config_unique.pkl')
 #+end_src
 
 #+results: 
@@ -556,6 +571,7 @@ Name: (6.11.6_output, run0019_0000), dtype: object
 #+end_example
 ** heat map of average velocity
 #+begin_src python
+
 results = []
 
 for output_dir in output_dirs:
@@ -588,37 +604,37 @@ for output_dir in output_dirs:
             slope, intercept, r_value, p_value, std_err = linregress(time, disp.values)
             fiber_velocities.append(slope)
 
-        if fiber_velocities:
-            mean_velocity = np.mean(fiber_velocities)
-            results.append([int(stiffness), number, mean_velocity])
+        for v in fiber_velocities:
+            results.append([int(stiffness), int(number), v])
+df = pd.DataFrame(results, columns=['stiffness', 'number', 'velocity'])
 
-# Create DataFrame and pivot
-df = pd.DataFrame(results, columns=['stiffness', 'number', 'mean_velocity'])
+# Group by parameter combinations
+grouped = df.groupby(['number','stiffness'])['velocity']
+means = grouped.mean().unstack()
+sems = grouped.sem().unstack()
+# Create a string array with "mean\n(±sem)" formatting
+annot_array = means.copy().astype(str)
 
-# Sort both axes before pivoting
-df_sorted = df.sort_values(by=['stiffness', 'number'])
-
-# Create pivot table with sorted axes
-heatmap_data = df_sorted.pivot(index='stiffness', columns='number', values='mean_velocity')
-
-# Sort index and columns explicitly to ensure consistent ordering
-heatmap_data = heatmap_data.sort_index(ascending=False, axis=0).sort_index(axis=1)
-
-# Extract tick labels from columns/index
-x_labels = heatmap_data.columns.values  # these are your real myosin counts
-x_labels_formatted = [f'$10^{{{int(np.log10(x))}}}$' for x in x_labels]
-
-# Plot heatmap
-plt.figure(figsize=(8, 6))
-ax = sns.heatmap(heatmap_data, annot=True, fmt=".3f", cmap='magma',
+for i in means.index:
+    for j in means.columns:
+        mean_val = means.loc[i, j]
+        sem_val = sems.loc[i, j]
+        if not pd.isna(mean_val) and not pd.isna(sem_val):
+            annot_array.loc[i, j] = f"{mean_val:.3f}\n(±{sem_val:.3f})"
+        else:
+            annot_array.loc[i, j] = ""
+plt.figure(figsize=(12, 6))
+ax = sns.heatmap(means, annot=annot_array, fmt='', cmap='magma',
                  cbar_kws={'label': 'Mean barbed end velocity ($\\frac{\\mu m}{s}$)'})
 
-# Set formatted tick labels manually
-ax.set_xticklabels(x_labels_formatted, rotation=0)
 
-# Axis labels
-plt.xlabel('Myosin molecule count')
-plt.ylabel('Myosin bond stiffness ($\\frac{pN}{\\mu m}$)')
+# Set log-style tick labels
+ax.set_yticklabels([f'$10^{{{int(np.log10(y))}}}$' for y in means.index], rotation=0)
+
+ax.invert_yaxis()
+
+plt.ylabel('Myosin molecule count')
+plt.xlabel('Myosin bond stiffness ($\\frac{pN}{\\mu m}$)')
 plt.tight_layout()
 
 if save_figures == 'yes':
@@ -626,7 +642,7 @@ if save_figures == 'yes':
 #+end_src
 
 #+results: 
-[[file:./.ob-jupyter/596acd1323f7ba5359e17e6477a72c33cd77c609.png]]
+[[file:./.ob-jupyter/1bdd22f017b344fdd705ac67d790fe01d2d7c0ee.png]]
 ** line plot of average velocity
 #+begin_src python
 
